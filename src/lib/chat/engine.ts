@@ -12,7 +12,7 @@ async function loadFaqs(): Promise<FaqRecord[]> {
   if (faqCache && Date.now() - faqCache.at < FAQ_TTL_MS) return faqCache.data;
   const data = await prisma.faq.findMany({
     where: { active: true },
-    select: { id: true, question: true, category: true, palabrasClave: true, respuestas: true },
+    select: { id: true, question: true, category: true, palabrasClave: true, respuestas: true, followUps: true },
   });
   faqCache = { at: Date.now(), data };
   return data;

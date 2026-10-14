@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FlameIcon } from '@/components/ui/Icons';
 import { site } from '@/lib/site';
 
 interface NavLeaf {
@@ -60,11 +59,9 @@ export function Header() {
     <header className={`site-header${scrolled ? ' scrolled' : ''}`}>
       <div className="container head">
         <Link className="brand" href="/" aria-label="Transgas inicio">
-          <span className="mark">
-            <FlameIcon />
-          </span>
-          <span>
-            <b>Transgas</b>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="logo" src="/brand/logo-transgas.png" alt="Grupo Transgas" width={161} height={46} />
+          <span className="brandtxt">
             <small>{site.legalName}</small>
           </span>
         </Link>

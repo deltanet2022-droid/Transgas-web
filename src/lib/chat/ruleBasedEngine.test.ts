@@ -6,7 +6,7 @@ import { containsSensitiveData } from './guards';
 import { normalize, tokenize } from './normalize';
 import type { ChatTurn, FaqRecord } from './types';
 
-const records: FaqRecord[] = seedFaqs.map((f, i) => ({ id: `faq${i}`, ...f }));
+const records: FaqRecord[] = seedFaqs.map((f, i) => ({ id: `faq${i}`, ...f, followUps: f.followUps ?? [] }));
 const byQuestion = (q: string) => records.find((r) => r.question === q)!;
 const engine = (random = () => 0) =>
   new RuleBasedEngine({ getFaqs: async () => records, emergencyPhone: '0800-777-8427', random });
@@ -152,4 +152,56 @@ test('detecta datos sensibles (tarjeta, CBU, contraseña)', () => {
   assert.equal(containsSensitiveData('llamo al 3385480200'), false);
   assert.equal(containsSensitiveData('no puedo ingresar con mi contraseña'), false);
   assert.equal(containsSensitiveData('quiero ver mi factura'), false);
+});
+
+// ───────── Base de conocimiento y charla guiada ─────────
+
+test('no hay preguntas duplicadas en la base de conocimiento', () => {
+  const qs = seedFaqs.map((f) => normalize(f.question));
+  assert.equal(new Set(qs).size, qs.length);
+});
+
+test('cada palabra clave de cada FAQ lleva a SU propia FAQ (sin cruces entre temas)', async () => {
+  const e = engine();
+  const bad: string[] = [];
+  for (const f of records) {
+    for (const k of f.palabrasClave) {
+      const r = await e.getResponse([], k);
+      if (r.kind === 'emergency') continue; // las urgencias se resuelven por la regla de emergencia
+      if (r.faqId !== f.id) bad.push(`"${k}" [${f.question}] → ${r.kind} ${records.find((x) => x.id === r.faqId)?.question ?? ''}`);
+    }
+  }
+  assert.deepEqual(bad, []);
+});
+
+test('cada botón de seguimiento dispara otra respuesta útil (nunca queda en el aire ni se repite)', async () => {
+  const e = engine();
+  const bad: string[] = [];
+  for (const f of records) {
+    for (const chip of f.followUps) {
+      const r = await e.getResponse([{ role: 'bot', text: 'x', meta: { kind: 'faq', faqId: f.id } }], chip);
+      const ok = (r.kind === 'faq' && r.faqId !== f.id) || r.kind === 'handoff' || r.kind === 'emergency';
+      if (!ok) bad.push(`[${f.question}] botón "${chip}" → ${r.kind} ${records.find((x) => x.id === r.faqId)?.question ?? ''}`);
+    }
+  }
+  assert.deepEqual(bad, []);
+});
+
+test('el menú principal y el saludo ofrecen todos los temas', async () => {
+  const e = engine();
+  const [hi] = await chat(e, ['hola']);
+  assert.match(hi.text, /Lu/);
+  assert.ok(hi.suggestions && hi.suggestions.length >= 8);
+  for (const chip of hi.suggestions!) {
+    const r = await e.getResponse([], chip);
+    assert.ok(['faq', 'handoff', 'emergency'].includes(r.kind), chip);
+  }
+});
+
+test('cada mensaje recibe UNA sola respuesta y toda FAQ con respuestas tiene al menos una', () => {
+  for (const f of records) assert.ok(f.respuestas.length >= 1 && f.respuestas.every((r) => r.trim().length > 20), f.question);
+});
+
+test('las respuestas con marcadores dinámicos usan solo los marcadores soportados', () => {
+  for (const f of records) for (const r of f.respuestas) for (const m of r.matchAll(/\{\{\s*([a-z]+)/gi)) assert.ok(['localidad', 'vencimiento'].includes(m[1]), f.question);
 });

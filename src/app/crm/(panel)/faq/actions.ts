@@ -14,6 +14,7 @@ const schema = z.object({
     .array(z.string().max(80, 'Cada palabra clave puede tener hasta 80 caracteres.'))
     .min(1, 'Cargá al menos una palabra clave.')
     .max(60, 'Máximo 60 palabras clave.'),
+  followUps: z.array(z.string().max(60, 'Cada botón puede tener hasta 60 caracteres.')).max(9, 'Máximo 9 botones de seguimiento.'),
   respuestas: z
     .array(z.string().max(1200, 'Cada variante puede tener hasta 1.200 caracteres.'))
     .min(1, 'Cargá al menos una respuesta.')
@@ -28,6 +29,7 @@ export async function saveFaq(_prev: ActionState, fd: FormData): Promise<ActionS
     category: formString(fd, 'category'),
     palabrasClave: formList(fd, 'palabrasClave'),
     respuestas: formList(fd, 'respuestas'),
+    followUps: formList(fd, 'followUps'),
   });
   if (!parsed.success) return fail(firstZodError(parsed.error));
 

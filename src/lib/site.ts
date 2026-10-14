@@ -12,10 +12,11 @@ export const site = {
   emergencyPhoneTel: '08007778427',
   schedule: 'Lunes a viernes · 07:00 a 14:00 hs',
   coopOnlineUrl: 'https://www.cooponlineweb.com.ar/TRANSGAS/Login',
-  mapsEmbed:
-    'https://www.google.com/maps?q=Ruta%20Nacional%207%20km%20541,%20General%20Levalle,%20C%C3%B3rdoba,%20Argentina&output=embed',
-  mapsLink:
-    'https://www.google.com/maps/search/?api=1&query=Ruta%20Nacional%207%20km%20541%2C%20General%20Levalle%2C%20C%C3%B3rdoba%2C%20Argentina',
+  // Ubicación real de Transgas (enlace compartido por el cliente: https://maps.app.goo.gl/wpscjqnL3i4mgfZ76)
+  lat: -34.0365779,
+  lng: -63.9264781,
+  mapsEmbed: 'https://www.google.com/maps?q=-34.0365779,-63.9264781&z=17&hl=es&output=embed',
+  mapsLink: 'https://maps.app.goo.gl/wpscjqnL3i4mgfZ76',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
 } as const;
 

@@ -21,6 +21,7 @@ export default async function CooperativesCrmPage() {
                   <th>Nombre</th>
                   <th>Dirección</th>
                   <th>Teléfono</th>
+                  <th>Correo</th>
                   <th>Horario</th>
                 </tr>
               </thead>
@@ -33,6 +34,7 @@ export default async function CooperativesCrmPage() {
                     </td>
                     <td>{c.address ?? <span style={{ color: 'var(--muted)' }}>Sin cargar</span>}</td>
                     <td>{c.phone ?? <span style={{ color: 'var(--muted)' }}>Sin cargar</span>}</td>
+                    <td>{c.email ?? <span style={{ color: 'var(--muted)' }}>Sin cargar</span>}</td>
                     <td>{c.schedule ?? <span style={{ color: 'var(--muted)' }}>Sin cargar</span>}</td>
                   </tr>
                 ))}

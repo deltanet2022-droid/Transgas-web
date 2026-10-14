@@ -20,6 +20,7 @@ export default async function InstallersCrmPage() {
                 <tr>
                   <th>Nombre</th>
                   <th>Matrícula</th>
+                  <th>Domicilio</th>
                   <th>Localidad</th>
                   <th>Contacto</th>
                   <th>Estado</th>
@@ -32,6 +33,7 @@ export default async function InstallersCrmPage() {
                       <Link href={`/crm/gasistas/${g.id}`}>{g.name}</Link>
                     </td>
                     <td>{g.license}</td>
+                    <td>{g.address ?? '—'}</td>
                     <td>{g.locality}</td>
                     <td>{[g.phone, g.email].filter(Boolean).join(' · ') || '—'}</td>
                     <td>{g.active ? <Badge tone="ok">Visible</Badge> : <Badge>Oculto</Badge>}</td>

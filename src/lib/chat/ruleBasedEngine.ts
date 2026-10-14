@@ -23,6 +23,10 @@ const DEICTIC_RE = /\b(eso|esto|ese|esa|lo mismo|ahi|alli|tambien|y si|y eso|y e
 const DEFAULT_SAFETY =
   'Si sentís olor a gas: salí del lugar, no accionés llaves de luz ni aparatos eléctricos, no uses fuego y llamá desde un lugar abierto.';
 
+/** Botón que lleva siempre al menú principal (FAQ "Menú principal"). */
+export const MENU_CHIP = 'Menú principal';
+const MAX_CHIPS = 9;
+
 export const CLARIFY_TEXT = '¿Es sobre tu factura, sobre una emergencia, o sobre un trámite?';
 export const CLARIFY_SUGGESTIONS = ['Mi factura', 'Una emergencia', 'Un trámite'];
 
@@ -93,7 +97,7 @@ export class RuleBasedEngine implements ChatEngine {
 
     if (pick && pick.score >= this.min) {
       const f = pick.prepared.faq;
-      return { text: this.pickVariant(f.respuestas, lastBotText), kind: 'faq', faqId: f.id };
+      return { text: this.pickVariant(f.respuestas, lastBotText), kind: 'faq', faqId: f.id, suggestions: this.followUps(f) };
     }
 
     // ── 5. Sin match: repreguntar una vez; si ya se repreguntó, derivar a WhatsApp ──
@@ -108,6 +112,13 @@ export class RuleBasedEngine implements ChatEngine {
   }
 
   // ───────────────────────── helpers ─────────────────────────
+
+  /** Botones de seguimiento de la FAQ + acceso al menú (salvo en el propio menú), máx. . */
+  private followUps(f: FaqRecord): string[] {
+    const chips = [...(f.followUps ?? [])];
+    if (!/^(menu|saludo)/.test(normalize(f.question)) && !chips.includes(MENU_CHIP)) chips.push(MENU_CHIP);
+    return chips.slice(0, MAX_CHIPS);
+  }
 
   /** Primera línea de toda respuesta de emergencia: el 0800, antes que cualquier otra cosa. */
   private emergencyIntro(): string {

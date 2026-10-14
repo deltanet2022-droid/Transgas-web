@@ -61,19 +61,20 @@ npm run dev              # http://localhost:3000
 ```bash
 npm run db:deploy      # prisma migrate deploy  → aplica prisma/migrations (producción y local)
 npm run db:migrate     # prisma migrate dev     → solo para desarrollo, si cambiás schema.prisma
-npm run db:seed        # datos de ejemplo
+npm run db:seed        # datos iniciales (crea lo que falta)
+npm run db:seed:faqs   # además ACTUALIZA las FAQ existentes con el contenido del seed (por pregunta; las FAQ propias no se tocan)
 npm run db:studio      # explorador visual de la base
 ```
 
-Hay dos migraciones: `init` (tablas) y `enable_rls` (activa *Row Level Security* sin políticas en todas las tablas, para que la API REST pública de Supabase **no pueda** leer ni escribir datos con la clave `anon`; la app accede con el rol `postgres`, que no se ve afectado).
+Hay tres migraciones: `init` (tablas), `enable_rls` y `chat_guidance_and_directories` (email de cooperativas, domicilio de gasistas y botones de seguimiento de las FAQ). `enable_rls` activa *Row Level Security* sin políticas en todas las tablas, para que la API REST pública de Supabase **no pueda** leer ni escribir datos con la clave `anon`; la app accede con el rol `postgres`, que no se ve afectado).
 
-El **seed** crea (solo lo que falta, **nunca pisa** lo que ya editaste en el CRM):
+El **seed** crea (solo lo que falta, **nunca pisa** lo que ya editaste en el CRM; las FAQ existentes solo se renuevan con `npm run db:seed:faqs`):
 
-- 34 preguntas frecuentes con palabras clave y 2–3 variantes de respuesta cada una.
+- 64 preguntas frecuentes (charla guiada: saludo, menú, facturación, trámites, servicio, seguridad, tarifas, cooperativas por localidad…) con palabras clave, variantes de respuesta y botones de seguimiento.
 - 12 categorías tarifarias (R1, R2-1…R3-4, SGP1…SGP3-b) y 1 cuadro tarifario vigente (enlace al PDF actual del sitio viejo).
 - 2 noticias publicadas, 1 vencimiento vigente, 1 aviso de servicio **de ejemplo** (programado).
-- Las 8 cooperativas (Ítalo, Jovita, La Cesira, Mattaldi, Pueblo Italiano, Serrano, Viamonte, Villa Valeria) **sin dirección/teléfono/horario** (completar desde el CRM).
-- 3 gasistas **de ejemplo** (reemplazar por el listado real).
+- Las 8 cooperativas con dirección, teléfonos, correo y horario reales (archivo `prisma/seed-data/directories.ts`). Si ya existían vacías, se completan sin pisar lo editado.
+- 24 gasistas matriculados reales (y se eliminan los 3 de ejemplo). Todo se mantiene después desde el CRM: agregar, editar y eliminar.
 - El usuario administrador (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`).
 
 ## 5. Primer ingreso al CRM
@@ -98,6 +99,8 @@ Widget (ChatWidget.tsx) ──POST /api/chat──▶ guardas de seguridad ─�
 - **Única fuente de respuestas:** la tabla `faqs` (CRM → *Preguntas frecuentes*). Cada FAQ tiene categoría, **palabras clave** y **2–3 variantes** de respuesta; el motor elige una al azar (sin repetir literalmente la anterior).
 - **Cómo puntúa:** normaliza (minúsculas, sin tildes ni signos, plurales, sinónimos simples como *boleta→factura*, verbos como *conectarme→alta*, tolerancia a un error de tipeo) y compara con las palabras clave. Una **frase** («olor a gas») pesa más que una palabra suelta; la mejor palabra clave manda y las demás suman poco, para que no gane la FAQ que simplemente tiene más palabras cargadas. Mínimo para responder: 2 puntos.
 - **Memoria:** recuerda la última FAQ respondida de la conversación, así «¿y eso cuánto tarda?» después de hablar de un nuevo servicio se resuelve por contexto. El historial sale de la base (`chat_messages`), no del navegador: nadie puede inyectar turnos falsos.
+- **Charla guiada:** cada mensaje recibe **una sola respuesta** y, debajo, **botones de seguimiento** (campo «Botones de seguimiento» de cada FAQ en el CRM) que llevan al siguiente tema lógico; siempre hay un botón «Menú principal». La asistente se presenta como **Lu** (se cambia en `src/components/chat/Avatar.tsx → ASSISTANT_NAME`) y saluda de forma cordial al abrir el chat.
+- **Datos vivos:** una respuesta puede llevar marcadores que se completan con datos del CRM al responder: `{{localidad:Jovita}}` (cooperativa + gasistas de esa localidad, leídos de las tablas de cooperativas y gasistas) y `{{vencimiento}}` (próximo vencimiento cargado). Así, si editás una cooperativa o un gasista en el CRM, el chat se actualiza solo.
 - **Sin coincidencia:** repregunta **una vez** («¿Es sobre tu factura, sobre una emergencia, o sobre un trámite?»); si vuelve a fallar, ofrece WhatsApp.
 - **Derivación a WhatsApp** (`https://wa.me/<número>?text=<resumen>`): pedido de hablar con una persona · emergencia · dos intentos sin coincidencia.
 - **Emergencias** (olor a gas, fuga, monóxido…): la respuesta **empieza siempre con el 0800**, después las instrucciones de seguridad y el botón de WhatsApp.
@@ -170,3 +173,11 @@ src/middleware.ts     protege /crm
 ## 11. Fuera de alcance de la Fase 1
 
 API de IA (solo el stub) · WhatsApp Business API (solo el enlace `wa.me`) · avisos automáticos por mail/SMS de vencimientos · banner de emergencia editable desde el CRM · auditoría de cambios del CRM · multi-idioma.
+
+
+## 12. Marca, mapa y buscadores
+
+- **Logo:** `public/brand/logo-transgas.png` (350×100 px). Se usa en el encabezado, el pie, el CRM y el login. Como es de baja resolución, conviene pedir a Transgas el archivo vectorial (SVG/AI/PDF) o un PNG de al menos 1000 px de ancho y reemplazarlo con el mismo nombre.
+- **Pestaña del navegador y Google:** `src/app/icon.png`, `apple-icon.png` y `favicon.ico` (llama dorada sobre azul, con los colores del logo), e imagen para compartir `opengraph-image.png`. Con `ALLOW_INDEXING=true` se agregan datos estructurados (JSON-LD) con nombre, logo, teléfono y dirección. Google tarda días o semanas en actualizar el ícono y el logo en sus resultados.
+- **Mapa:** coordenadas reales de Transgas (General Levalle) en `src/lib/site.ts` (`lat`, `lng`, `mapsEmbed`, `mapsLink`).
+- **Animaciones:** solo CSS + un pequeño componente (`ScrollReveal.tsx`), sin librerías. Respetan la preferencia «reducir movimiento» del sistema. Estilos en `src/app/motion.css`.

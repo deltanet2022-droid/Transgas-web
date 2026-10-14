@@ -18,10 +18,15 @@ export function CooperativeForm({ coop }: { coop?: Cooperative }) {
       <Field label="Dirección" htmlFor="address">
         <input id="address" name="address" type="text" maxLength={200} defaultValue={coop?.address ?? ''} />
       </Field>
-      <div className="row r3">
-        <Field label="Teléfono" htmlFor="phone">
-          <input id="phone" name="phone" type="text" maxLength={80} defaultValue={coop?.phone ?? ''} />
+      <div className="row">
+        <Field label="Teléfono(s)" htmlFor="phone" help="Si hay más de uno, separalos con /  Ej. 03385-498420 / 498165">
+          <input id="phone" name="phone" type="text" maxLength={120} defaultValue={coop?.phone ?? ''} />
         </Field>
+        <Field label="Correo electrónico" htmlFor="email">
+          <input id="email" name="email" type="email" maxLength={160} defaultValue={coop?.email ?? ''} />
+        </Field>
+      </div>
+      <div className="row">
         <Field label="Horario de atención" htmlFor="schedule">
           <input id="schedule" name="schedule" type="text" maxLength={160} defaultValue={coop?.schedule ?? ''} placeholder="Lunes a viernes de 8 a 13 hs" />
         </Field>

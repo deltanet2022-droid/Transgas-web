@@ -31,6 +31,10 @@ export function FaqForm({ faq, categories }: { faq?: Faq; categories: string[] }
         <VariantsEditor name="respuestas" initial={faq?.respuestas ?? []} />
       </Field>
 
+      <Field label="Botones de seguimiento (guían la charla)" help="Aparecen como botones después de la respuesta, para llevar al usuario al siguiente tema. Cada texto tiene que activar OTRA pregunta (por ejemplo «¿Cuánto tarda el alta?»); si no coincide con ninguna, el chatbot repregunta. Máximo 9.">
+        <TagInput name="followUps" initial={faq?.followUps ?? []} placeholder="Escribí el texto del botón y apretá Enter" />
+      </Field>
+
       <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: '.86rem' }}>
         <input type="checkbox" name="active" defaultChecked={faq?.active ?? true} /> Activa (el chatbot puede usarla)
       </label>

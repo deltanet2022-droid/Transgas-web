@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FlameIcon } from '@/components/ui/Icons';
 import { signOut } from '@/app/crm/login/actions';
 
 const ITEMS = [
@@ -33,10 +32,9 @@ export function Sidebar({ user }: { user: { email: string; name: string | null; 
   return (
     <aside className="crm-side">
       <Link className="brandrow" href="/crm">
-        <span className="mark">
-          <FlameIcon />
-        </span>
-        Transgas CRM
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/logo-transgas.png" alt="Transgas" width={119} height={34} />
+        <span>CRM</span>
       </Link>
       <nav aria-label="CRM">
         {visible.map((i, idx) =>

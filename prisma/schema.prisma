@@ -154,6 +154,7 @@ model Cooperative {
   legalName   String? // razón social
   address     String?
   phone       String?
+  email       String?
   schedule    String?
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
@@ -166,6 +167,7 @@ model LicensedInstaller {
   id        String   @id @default(cuid())
   name      String
   license   String // matrícula
+  address   String? // domicilio
   locality  String
   phone     String?
   email     String?
@@ -185,6 +187,8 @@ model Faq {
   category     String
   palabrasClave String[] // keywords
   respuestas   String[] // 2-3 variantes de redacción
+  /// Botones sugeridos después de responder (guían la charla). Cada texto debe disparar otra FAQ.
+  followUps    String[] @default([])
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

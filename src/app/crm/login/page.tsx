@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { ActionForm } from '@/components/crm/ActionForm';
-import { FlameIcon } from '@/components/ui/Icons';
 import { signIn } from './actions';
 
 export const metadata: Metadata = { title: 'Ingresar al CRM', robots: { index: false, follow: false } };
@@ -9,9 +8,8 @@ export default function LoginPage({ searchParams }: { searchParams: { error?: st
   return (
     <div className="loginwrap">
       <div className="logincard">
-        <span className="mark" style={{ background: 'var(--n2)', color: '#fff', width: 48, height: 48, borderRadius: 14, display: 'grid', placeItems: 'center' }}>
-          <FlameIcon width={28} />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="loginlogo" src="/brand/logo-transgas.png" alt="Grupo Transgas" width={182} height={52} />
         <h1>Panel de administración</h1>
         <p>Ingresá con tu usuario de Transgas.</p>
         {searchParams.error === 'noaccess' && (

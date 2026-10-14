@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { PrismaClient, type TariffType } from '@prisma/client';
 import { createClient } from '@supabase/supabase-js';
 import { faqs } from './seed-data/faqs';
+import { cooperatives, installers } from './seed-data/directories';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -160,49 +161,64 @@ async function seedServiceStatus() {
 }
 
 async function seedCooperatives() {
-  const coops = [
-    ['Ítalo', 'Cooperativa de Provisión de Electricidad y Obras y Servicios Públicos'],
-    ['Jovita', 'Cooperativa Eléctrica Jovita Limitada'],
-    ['La Cesira', 'Cooperativa de Electricidad, Vivienda y Anexos'],
-    ['Mattaldi', 'Cooperativa de Electricidad y Servicios Públicos'],
-    ['Pueblo Italiano', 'Cooperativa de Servicios Públicos'],
-    ['Serrano', 'Cooperativa de Servicios Públicos y Sociales'],
-    ['Viamonte', 'Cooperativa de Consumo Popular de Electricidad y Servicios Anexos'],
-    ['Villa Valeria', 'Cooperativa de Electricidad Ltda.'],
-  ];
   let created = 0;
-  for (const [i, [name, legalName]] of coops.entries()) {
-    if (await prisma.cooperative.findFirst({ where: { name } })) continue;
-    // Dirección, teléfono y horario: completar desde el CRM con los datos reales.
-    await prisma.cooperative.create({ data: { name, legalName, sortOrder: i } });
-    created++;
+  let filled = 0;
+  for (const [i, c] of cooperatives.entries()) {
+    const existing = await prisma.cooperative.findFirst({ where: { name: c.name } });
+    if (!existing) {
+      await prisma.cooperative.create({
+        data: { name: c.name, legalName: c.legalName, address: c.address, phone: c.phone, email: c.email, schedule: c.schedule, sortOrder: i },
+      });
+      created++;
+      continue;
+    }
+    // Ya existe: solo se completan campos vacíos (no se pisa lo editado desde el CRM).
+    const patch: Record<string, string> = {};
+    if (!existing.address) patch.address = c.address;
+    if (!existing.phone) patch.phone = c.phone;
+    if (!existing.email) patch.email = c.email;
+    if (!existing.schedule) patch.schedule = c.schedule;
+    if (!existing.legalName || existing.legalName === c.oldLegalName) patch.legalName = c.legalName;
+    if (Object.keys(patch).length) {
+      await prisma.cooperative.update({ where: { id: existing.id }, data: patch });
+      filled++;
+    }
   }
-  console.log(`· Cooperativas: ${created} creadas (completar dirección/teléfono/horario desde el CRM).`);
+  console.log(`· Cooperativas: ${created} creadas, ${filled} completadas con datos reales (editables desde el CRM).`);
 }
 
 async function seedInstallers() {
-  const items = [
-    { name: 'Gasista de ejemplo 1', license: 'EJ-0001', locality: 'General Levalle', phone: '3385 000001' },
-    { name: 'Gasista de ejemplo 2', license: 'EJ-0002', locality: 'Mattaldi', phone: '3385 000002' },
-    { name: 'Gasista de ejemplo 3', license: 'EJ-0003', locality: 'Serrano', phone: '3385 000003' },
-  ];
+  // Los gasistas "de ejemplo" del seed anterior se reemplazan por el listado real.
+  const removed = await prisma.licensedInstaller.deleteMany({ where: { license: { startsWith: 'EJ-' } } });
   let created = 0;
-  for (const g of items) {
+  for (const g of installers) {
     if (await prisma.licensedInstaller.findFirst({ where: { license: g.license } })) continue;
-    await prisma.licensedInstaller.create({ data: g });
+    await prisma.licensedInstaller.create({ data: { name: g.name, license: g.license, address: g.address ?? null, phone: g.phone ?? null, locality: g.locality } });
     created++;
   }
-  console.log(`· Gasistas: ${created} de ejemplo creados (reemplazar por el listado real).`);
+  console.log(`· Gasistas: ${created} cargados del listado real (${removed.count} de ejemplo eliminados).`);
 }
 
+/**
+ * FAQ del chatbot. Por defecto solo crea las que faltan (no pisa ediciones del CRM).
+ * Con --update-faqs actualiza también las existentes con el contenido del seed (por pregunta).
+ */
 async function seedFaqs() {
+  const update = process.argv.includes('--update-faqs');
   let created = 0;
+  let updated = 0;
   for (const f of faqs) {
-    if (await prisma.faq.findFirst({ where: { question: f.question } })) continue;
-    await prisma.faq.create({ data: f });
-    created++;
+    const data = { question: f.question, category: f.category, palabrasClave: f.palabrasClave, respuestas: f.respuestas, followUps: f.followUps ?? [] };
+    const existing = await prisma.faq.findFirst({ where: { question: f.question } });
+    if (!existing) {
+      await prisma.faq.create({ data });
+      created++;
+    } else if (update) {
+      await prisma.faq.update({ where: { id: existing.id }, data });
+      updated++;
+    }
   }
-  console.log(`· FAQ: ${created} creadas (${faqs.length} en el seed).`);
+  console.log(`· FAQ: ${created} creadas, ${updated} actualizadas (${faqs.length} en el seed).${update ? '' : ' Para actualizar las existentes: npm run db:seed:faqs'}`);
 }
 
 async function main() {

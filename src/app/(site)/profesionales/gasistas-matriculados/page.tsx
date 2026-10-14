@@ -1,14 +1,21 @@
 import type { Metadata } from 'next';
 import { Callout, HelpAside, PageBody, PageHeader, relatedSafety } from '@/components/site/PageParts';
 import { getActiveInstallers } from '@/lib/queries';
+import { splitPhones } from '@/lib/phones';
 
 export const metadata: Metadata = {
   title: 'Gasistas matriculados',
-  description: 'Listado de gasistas matriculados con matrícula, localidad y datos de contacto.',
+  description: 'Listado de gasistas matriculados con matrícula, domicilio, localidad y datos de contacto.',
 };
 
 export default async function GasistasPage() {
   const installers = await getActiveInstallers();
+
+  // Agrupados por localidad, en orden alfabético.
+  const byLocality = new Map<string, typeof installers>();
+  for (const i of installers) byLocality.set(i.locality, [...(byLocality.get(i.locality) ?? []), i]);
+  const localities = [...byLocality.keys()].sort((a, b) => a.localeCompare(b, 'es'));
+
   return (
     <>
       <PageHeader
@@ -26,29 +33,34 @@ export default async function GasistasPage() {
             El listado de gasistas se está actualizando. Consultanos por el teléfono de atención.
           </div>
         ) : (
-          <div className="listgrid" style={{ marginTop: 20 }}>
-            {installers.map((g) => (
-              <article key={g.id} className="card person static">
-                <h3>{g.name}</h3>
-                <span className="lic">Matrícula {g.license}</span>
-                <p>
-                  <b>{g.locality}</b>
-                  {g.phone && (
-                    <>
-                      <br />
-                      <a href={`tel:${g.phone.replace(/[^\d+]/g, '')}`}>{g.phone}</a>
-                    </>
-                  )}
-                  {g.email && (
-                    <>
-                      <br />
-                      <a href={`mailto:${g.email}`}>{g.email}</a>
-                    </>
-                  )}
-                </p>
-              </article>
-            ))}
-          </div>
+          localities.map((loc) => (
+            <section key={loc} style={{ marginTop: 28 }}>
+              <h2 style={{ fontSize: '1.2rem', marginBottom: 12 }}>{loc}</h2>
+              <div className="listgrid">
+                {byLocality.get(loc)!.map((g) => (
+                  <article key={g.id} className="card person static">
+                    <h3>{g.name}</h3>
+                    <span className="lic">Matrícula {g.license}</span>
+                    <p>
+                      {g.address && <>{g.address}<br /></>}
+                      {splitPhones(g.phone).map((p, i) => (
+                        <span key={p.tel}>
+                          {i > 0 && ' · '}
+                          <a href={`tel:${p.tel}`}>{p.label}</a>
+                        </span>
+                      ))}
+                      {g.email && (
+                        <>
+                          <br />
+                          <a href={`mailto:${g.email}`}>{g.email}</a>
+                        </>
+                      )}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))
         )}
       </PageBody>
     </>

@@ -5,6 +5,7 @@ import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { getChatEngine } from '@/lib/chat/engine';
 import { SENSITIVE_PLACEHOLDER, SENSITIVE_REPLY, containsSensitiveData } from '@/lib/chat/guards';
 import { buildWhatsAppUrl } from '@/lib/chat/whatsapp';
+import { expandDynamic } from '@/lib/chat/dynamic';
 import type { ChatReply, ChatTurn, ReplyKind } from '@/lib/chat/types';
 
 export const runtime = 'nodejs';
@@ -70,6 +71,9 @@ export async function POST(req: Request) {
       };
     }
   }
+
+  // Marcadores como {{localidad:Jovita}}: se completan con datos actuales del CRM.
+  reply = { ...reply, text: await expandDynamic(reply.text).catch(() => reply.text.replace(/{{[^}]*}}/g, '')) };
 
   const whatsappUrl = reply.handoff ? buildWhatsAppUrl(process.env.WHATSAPP_NUMBER, reply.handoff.summary) : null;
   const meta = { kind: reply.kind, ...(reply.faqId ? { faqId: reply.faqId } : {}), ...(reply.handoff ? { handoff: reply.handoff.reason } : {}) };

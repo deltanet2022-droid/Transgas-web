@@ -6,7 +6,10 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container footgrid">
         <div>
-          <div className="footbrand">Transgas</div>
+          <span className="footlogo">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/logo-transgas.png" alt="Grupo Transgas" width={147} height={42} />
+          </span>
           <p>{site.legalName} Servicio, infraestructura, información y comunidad.</p>
         </div>
         <div className="foot">

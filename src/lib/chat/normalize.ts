@@ -46,6 +46,7 @@ const SYNONYMS: Record<string, string> = {
   intoxicacion: 'monoxido',
   co: 'monoxido',
   humano: 'persona',
+  humana: 'persona',
   operador: 'persona',
   agente: 'persona',
   asesor: 'persona',

@@ -45,4 +45,6 @@ export interface FaqRecord {
   category: string;
   palabrasClave: string[];
   respuestas: string[];
+  /** Botones sugeridos tras la respuesta (guían la charla). */
+  followUps: string[];
 }
