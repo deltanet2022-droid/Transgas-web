@@ -47,6 +47,7 @@ npm run dev              # http://localhost:3000
 | `SUPABASE_SERVICE_ROLE_KEY` | Sí | Clave `service_role`. **Solo servidor, secreta.** Alta/baja de usuarios y subida de archivos. |
 | `SUPABASE_STORAGE_BUCKET` | No | Nombre del bucket (default `transgas-public`). |
 | `NEXT_PUBLIC_SITE_URL` | Sí (prod.) | URL pública del sitio (para `sitemap.xml`, `robots.txt` y metadatos). |
+| `ALLOW_INDEXING` | No | `false` (default) en el dominio de prueba: pide a Google **no** indexar el sitio (`X-Robots-Tag`, `<meta robots>` y `robots.txt`). Poné `true` **solo** en el dominio definitivo. Se lee en el build: redeployar al cambiarlo. |
 | `CHAT_ENGINE` | No | Motor del chatbot. **Hoy solo `rules`** (default). |
 | `WHATSAPP_NUMBER` | Sí | Número para el botón de WhatsApp, internacional y solo dígitos (Argentina móvil: `549` + área + número, ej. `5493385123456`). |
 | `EMERGENCY_PHONE_DISPLAY` / `EMERGENCY_PHONE_TEL` | No | Teléfono de emergencias que muestra el chatbot (default 0800-777-8427). |
@@ -139,6 +140,7 @@ Notas:
 - Prisma ya trae los *binary targets* para Linux (`debian-openssl-3.0.x` y `rhel-openssl-3.0.x`) en `prisma/schema.prisma`.
 - Si el *build* se queda sin memoria en el plan compartido, compilá en tu PC y subí el resultado, o pedile a Hostinger más memoria para la app.
 - Para actualizar: subí los cambios y volvé a desplegar. Si hubo migraciones nuevas, corré `npm run db:deploy` antes.
+- **Redirecciones del sitio viejo:** las 16 URLs de WordPress (`/tarifa-social/`, `/el-monoxido-de-carbono-mata/`, etc.) redirigen con 308 a las páginas nuevas; están en `next.config.mjs`. Los archivos subidos a `wp-content/uploads` (PDFs) **no** se redirigen: hay que re-subirlos.
 - El sitio público se renderiza en cada request (`force-dynamic`) para que lo que se carga en el CRM se vea al instante; el *build* **no** necesita conexión a la base.
 - El límite anti-abuso de `/api/leads` y `/api/chat` está **en memoria del proceso**: sirve para una sola instancia. Si algún día se escala a varias, hay que moverlo a Redis/Upstash.
 

@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description:
     'Portal institucional de Transgas: gas natural, autogestión, infraestructura y redes, seguridad, tarifas, cooperativas asociadas e información para usuarios.',
   openGraph: { siteName: 'Transgas', locale: 'es_AR', type: 'website' },
+  // Sin ALLOW_INDEXING=true (dominio de prueba) se pide a Google que no indexe el sitio.
+  ...(process.env.ALLOW_INDEXING === 'true' ? {} : { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = { themeColor: '#0B2A4E' };
