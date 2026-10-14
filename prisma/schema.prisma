@@ -1,0 +1,249 @@
+// Transgas — modelo de datos (Fase 1)
+// Supabase se usa solo como Postgres + Auth + Storage.
+
+generator client {
+  provider      = "prisma-client-js"
+  // "native" para desarrollo local; los otros targets cubren hosting Linux (Hostinger).
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ───────────────────────── Usuarios del CRM ─────────────────────────
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+model User {
+  id         String   @id @default(cuid())
+  // id del usuario en Supabase Auth (auth.users.id)
+  supabaseId String?  @unique
+  email      String   @unique
+  name       String?
+  role       Role     @default(EDITOR)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ───────────────────────── Tarifas ─────────────────────────
+
+enum TariffType {
+  RESIDENCIAL
+  SGP
+}
+
+/// Categoría tarifaria (R1, R2-1, SGP1, ...)
+model Tariff {
+  id               String     @id @default(cuid())
+  code             String     @unique
+  name             String
+  type             TariffType @default(RESIDENCIAL)
+  description      String?
+  consumptionRange String? // ej. "Hasta 1.000 m³/año"
+  active           Boolean    @default(true)
+  sortOrder        Int        @default(0)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  dueDates DueDate[]
+
+  @@map("tariffs")
+}
+
+/// PDF del cuadro tarifario. El vigente es el más reciente con isCurrent = true.
+model TariffDocument {
+  id          String   @id @default(cuid())
+  title       String
+  fileUrl     String
+  storagePath String? // null si es un enlace externo
+  validFrom   DateTime
+  isCurrent   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("tariff_documents")
+}
+
+// ───────────────────────── Noticias ─────────────────────────
+
+enum NewsStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model News {
+  id            String     @id @default(cuid())
+  title         String
+  slug          String     @unique
+  excerpt       String?
+  body          String // HTML ya sanitizado
+  coverImageUrl String?
+  category      String?
+  status        NewsStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@map("news")
+}
+
+// ───────────────────────── Vencimientos ─────────────────────────
+
+model DueDate {
+  id        String   @id @default(cuid())
+  dueDate   DateTime // fecha de vencimiento
+  showFrom  DateTime // desde cuándo se muestra el banner
+  message   String
+  tariffId  String? // null = general
+  tariff    Tariff?  @relation(fields: [tariffId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([showFrom, dueDate])
+  @@map("due_dates")
+}
+
+// ───────────────────────── Leads (formularios) ─────────────────────────
+
+enum LeadType {
+  FACTURA_ELECTRONICA
+  INFORMAR_PAGO
+  INFORMAR_MEDIDOR
+  ABM_SERVICIO
+  NUEVO_SERVICIO
+  CONTACTO
+}
+
+enum LeadStatus {
+  NUEVO
+  EN_GESTION
+  RESUELTO
+}
+
+model Lead {
+  id            String     @id @default(cuid())
+  type          LeadType
+  status        LeadStatus @default(NUEVO)
+  name          String
+  email         String?
+  phone         String?
+  message       String?
+  /// Datos específicos de cada formulario (nº de cliente, medidor, domicilio, ...)
+  extraData     Json       @default("{}")
+  internalNotes String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([status, createdAt])
+  @@index([type, createdAt])
+  @@map("leads")
+}
+
+// ───────────────────────── Directorios ─────────────────────────
+
+model Cooperative {
+  id          String   @id @default(cuid())
+  name        String // localidad / nombre corto
+  legalName   String? // razón social
+  address     String?
+  phone       String?
+  schedule    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("cooperatives")
+}
+
+model LicensedInstaller {
+  id        String   @id @default(cuid())
+  name      String
+  license   String // matrícula
+  locality  String
+  phone     String?
+  email     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("licensed_installers")
+}
+
+// ───────────────────────── Chatbot ─────────────────────────
+
+/// Única fuente de respuestas del chatbot (Fase 1).
+model Faq {
+  id           String   @id @default(cuid())
+  question     String
+  category     String
+  palabrasClave String[] // keywords
+  respuestas   String[] // 2-3 variantes de redacción
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+enum ServiceState {
+  PROGRAMADO
+  EN_CURSO
+  RESUELTO
+}
+
+model ServiceStatus {
+  id             String       @id @default(cuid())
+  title          String
+  description    String
+  zone           String
+  startsAt       DateTime
+  estimatedEndAt DateTime?
+  status         ServiceState @default(PROGRAMADO)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status, startsAt])
+  @@map("service_status")
+}
+
+model ChatConversation {
+  id                 String        @id @default(cuid())
+  startedAt          DateTime      @default(now())
+  lastActivityAt     DateTime      @default(now())
+  /// Alguna respuesta vino de una FAQ
+  matchedFaq         Boolean       @default(false)
+  /// Se mostró el botón de WhatsApp
+  whatsappHandoff    Boolean       @default(false)
+  /// Se detectó una emergencia
+  emergency          Boolean       @default(false)
+  messages           ChatMessage[]
+
+  @@index([lastActivityAt])
+  @@map("chat_conversations")
+}
+
+enum ChatRole {
+  USER
+  BOT
+}
+
+model ChatMessage {
+  id             String           @id @default(cuid())
+  conversationId String
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           ChatRole
+  text           String
+  /// { kind: 'faq' | 'clarify' | 'handoff' | ..., faqId?: string }
+  meta           Json?
+  createdAt      DateTime         @default(now())
+
+  @@index([conversationId, createdAt])
+  @@map("chat_messages")
+}
