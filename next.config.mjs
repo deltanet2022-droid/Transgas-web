@@ -43,11 +43,17 @@ const nextConfig = {
       { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
     ];
+    // Fuentes, fotos y logos casi nunca cambian: el navegador los guarda y no los vuelve a pedir en cada página.
+    const longCache = (value) => [{ key: 'Cache-Control', value }];
     return [
       {
         source: '/:path*',
         headers: allowIndexing ? common : [...common, { key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
+      { source: '/fonts/:path*', headers: longCache('public, max-age=31536000, immutable') },
+      { source: '/images/:path*', headers: longCache('public, max-age=604800, stale-while-revalidate=86400') },
+      { source: '/news/:path*', headers: longCache('public, max-age=604800, stale-while-revalidate=86400') },
+      { source: '/brand/:path*', headers: longCache('public, max-age=86400, stale-while-revalidate=604800') },
     ];
   },
 };

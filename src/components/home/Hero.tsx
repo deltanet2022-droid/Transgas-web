@@ -9,7 +9,7 @@ export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
     <section className="hero" id="inicio">
       <div className="hero-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images.hero} alt="Infraestructura gasífera" fetchPriority="high" decoding="async" />
+        <img src={images.hero} alt="" aria-hidden width={1600} height={1067} fetchPriority="high" decoding="async" />
       </div>
       <div className="container hero-grid">
         <div>
@@ -28,20 +28,6 @@ export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
             <Link className="btn outline" href="/#infraestructura">
               Conocer obras y redes
             </Link>
-          </div>
-          <div className="proof">
-            <div>
-              <strong>+20 años</strong>
-              <span>de experiencia</span>
-            </div>
-            <div>
-              <strong>Atención y emergencias</strong>
-              <span>canales oficiales visibles</span>
-            </div>
-            <div>
-              <strong>Desarrollo de redes</strong>
-              <span>infraestructura regional</span>
-            </div>
           </div>
         </div>
 
@@ -63,7 +49,9 @@ export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
                 <span>Ingresá a CoopOnline para consultar, descargar y gestionar tu servicio.</span>
               </span>
               <span className="path-arrow" aria-hidden>
-                ↗
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17 17 7M8 7h9v9" />
+                </svg>
               </span>
             </a>
             <Link className="path" href="/#infraestructura">

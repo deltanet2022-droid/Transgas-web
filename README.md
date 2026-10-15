@@ -29,7 +29,7 @@ npm run dev              # http://localhost:3000
 
 1. Creá un proyecto en Supabase (región cercana, ej. *South America – São Paulo*).
 2. **Project Settings → Database → Connection string**: copiá la cadena del **Connection pooler**:
-   - *Transaction mode* (puerto **6543**) → `DATABASE_URL` (agregale `?pgbouncer=true&connection_limit=1`).
+   - *Transaction mode* (puerto **6543**) → `DATABASE_URL` (agregale `?pgbouncer=true&connection_limit=5`).
    - *Session mode* (puerto **5432**) → `DIRECT_URL` (la usa Prisma para migrar).
    - Usá el *pooler* y no el host directo `db.xxxx.supabase.co`: el host directo es solo IPv6 y muchos hostings no lo alcanzan.
 3. **Project Settings → API**: copiá `Project URL`, la clave `anon` y la clave `service_role`.
@@ -210,7 +210,8 @@ Después, en **hPanel → Node.js App → Variables de entorno** agregá (ver `.
 
 | Variable | Para qué |
 |---|---|
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | Envío de mails. Con el correo del dominio en Hostinger: hPanel → *Correos electrónicos* → crear una casilla (por ejemplo `no-responder@transgas.com.ar`) → *Configurar dispositivo* muestra host y puerto (suele ser `smtp.hostinger.com`, puerto 465). |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | **Opcional**: el servidor de correo se carga más fácil desde **CRM → Configuración → Servidor de correo** (la contraseña se guarda cifrada). Estas variables solo se usan si en el CRM no se cargó nada. Con el correo del dominio en Hostinger: hPanel → *Correos electrónicos* → crear una casilla (por ejemplo `no-responder@transgas.com.ar`) → *Configurar dispositivo* muestra host y puerto (suele ser `smtp.hostinger.com`, puerto 465). |
+| `APP_SECRET` | Opcional. Clave para cifrar la contraseña del correo guardada en el CRM (si falta se usa `SUPABASE_SERVICE_ROLE_KEY`). |
 | `NOTIFY_EMAILS`, `PRIVACY_EMAIL` | Valores iniciales; después se editan desde CRM → Configuración. |
 | `CRON_SECRET` | Clave larga y aleatoria para los avisos automáticos. |
 | `NOTICE_BATCH` | Máximo de mails por ejecución (default 100). |
@@ -236,6 +237,14 @@ Cada ejecución envía, a los suscriptores confirmados, el aviso de los vencimie
 - `/privacidad` es un **texto modelo**: debe ser revisado y aprobado por un abogado antes de publicarse. En particular: (a) si corresponde la **inscripción de la base de datos** en el Registro Nacional de Bases de Datos de la AAIP y su número; (b) la **transferencia internacional** (la base está en Supabase y el hosting en Hostinger, que pueden estar fuera de Argentina; el texto pide el consentimiento informado); (c) los plazos de conservación; (d) el **correo** para ejercer derechos (CRM → Configuración).
 - Al cambiar la política de forma sustancial, subir `PRIVACY_VERSION` en `src/lib/privacy.ts`: queda registrada con cada consentimiento.
 - Las estadísticas no usan cookies ni guardan IP (hash irreversible que cambia por día), no cuentan bots ni a quienes activan «No rastrear». Por eso no hace falta banner de cookies para el sitio público.
+
+### Ajustes posteriores (velocidad, contenido y correo)
+- **Velocidad**: tipografías y fotos ahora se sirven desde el propio sitio (`public/fonts`, `public/images`, `public/news`) con caché larga; las consultas del sitio público se guardan unos segundos en memoria (`src/lib/memo.ts`) y se vacían al guardar algo en el CRM; el chat se carga aparte; hay pantallas de carga (`loading.tsx`) en el sitio y en el CRM.
+- **CRM más rápido**: la sesión verificada se recuerda 60 s (`src/lib/auth.ts`) y los formularios de guardado devuelven `redirectTo`: el navegador vuelve al listado sin esperar a que el servidor arme la otra página.
+- **`DATABASE_URL`**: se recomienda `connection_limit=5` (en vez de 1) para que las consultas en paralelo no se encolen en un servidor que está siempre encendido.
+- **Rangos de consumo** de cada categoría tarifaria: `src/lib/tariffRanges.ts` (se pueden pisar escribiendo el «Rango de consumo» en CRM → Tarifas).
+- **Noticias iniciales**: `prisma/seed-data/news.ts`. Para reemplazar el texto y la imagen de las dos noticias de ejemplo en una base ya cargada: `npm run db:seed:news` (pisa esas dos noticias).
+- **Logo blanco** (pie y CRM): `public/brand/logo-transgas-white.png`.
 
 ### Sigue fuera de alcance
 IA en el chatbot, WhatsApp Business API, SMS, multi-idioma y auditoría de cambios del CRM.

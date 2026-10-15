@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
-import { fail, firstZodError, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
   name: z.string().min(2, 'Ingresá el nombre del profesional.').max(120),
@@ -32,7 +32,7 @@ export async function saveInstaller(_prev: ActionState, fd: FormData): Promise<A
   if (id) await prisma.licensedInstaller.update({ where: { id }, data });
   else await prisma.licensedInstaller.create({ data });
   refreshCrm();
-  redirect('/crm/gasistas');
+  return saved('/crm/gasistas', 'Gasista guardado.');
 }
 
 export async function deleteInstaller(fd: FormData) {

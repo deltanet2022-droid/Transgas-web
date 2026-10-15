@@ -1,4 +1,4 @@
-import { ChatWidget } from '@/components/chat/ChatWidget';
+import { ChatLoader } from '@/components/chat/ChatLoader';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 import { SiteBanners } from '@/components/site/SiteBanners';
@@ -18,7 +18,7 @@ export function SiteShell({ children, banners = true }: { children: React.ReactN
       <Header />
       <main id="main">{children}</main>
       <Footer />
-      <ChatWidget />
+      <ChatLoader />
       <ScrollReveal />
       {banners && <PageViewTracker />}
     </>

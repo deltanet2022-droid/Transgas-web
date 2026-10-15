@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
 import { invalidateFaqCache } from '@/lib/chat/engine';
-import { fail, firstZodError, formList, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formList, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
   question: z.string().min(3, 'Escribí la pregunta.').max(200, 'La pregunta es demasiado larga (máx. 200).'),
@@ -38,7 +38,7 @@ export async function saveFaq(_prev: ActionState, fd: FormData): Promise<ActionS
   else await prisma.faq.create({ data });
   invalidateFaqCache();
   refreshCrm();
-  redirect('/crm/faq');
+  return saved('/crm/faq', 'Pregunta guardada.');
 }
 
 export async function deleteFaq(fd: FormData) {

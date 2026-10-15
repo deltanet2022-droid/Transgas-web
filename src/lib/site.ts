@@ -22,8 +22,8 @@ export const site = {
 
 /** Imágenes de la home (las mismas del HTML de referencia). Reemplazar por archivos propios cuando estén disponibles. */
 export const images = {
-  hero: 'https://media.puntal.com.ar/p/34636f281f119bbd0a014694fe3e71f/adjuntos/270/imagenes/001/576/0001576894/1200x0/smart/vaca-muerta-gasjpg.jpg',
-  about: 'https://cloudfront-us-east-1.images.arcpublishing.com/artear/4J4SOS67GRGFNJTJ6CI4H7PJAM.jpg',
-  infra: 'https://expansionweb.com.ar/images/RED_GAS_DOMICILIARIA.jpg',
-  safety: 'https://www.tgn.com.ar/assets/media/2025/03/Ferreyra_10.jpg',
+  hero: '/images/hero.jpg',
+  about: '/images/about.jpg',
+  infra: '/images/infra.jpg',
+  safety: '/images/safety.jpg',
 } as const;

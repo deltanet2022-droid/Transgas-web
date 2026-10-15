@@ -5,6 +5,7 @@ import { PageBody, PageHeader } from '@/components/site/PageParts';
 import { formatDateLong } from '@/lib/dates';
 import { getPublishedNewsBySlug } from '@/lib/queries';
 import { sanitizeRichText } from '@/lib/sanitize';
+import { fillTokens } from '@/lib/tokens';
 
 type Props = { params: { slug: string } };
 
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NewsDetailPage({ params }: Props) {
   const n = await getPublishedNewsBySlug(params.slug);
   if (!n) notFound();
+  const body = await fillTokens(sanitizeRichText(n.body));
 
   return (
     <>
@@ -39,7 +41,7 @@ export default async function NewsDetailPage({ params }: Props) {
             </div>
           )}
           {/* El HTML se sanitiza al guardar en el CRM y de nuevo acá (defensa en profundidad). */}
-          <div className="prose" dangerouslySetInnerHTML={{ __html: sanitizeRichText(n.body) }} />
+          <div className="prose" dangerouslySetInnerHTML={{ __html: body }} />
           <p style={{ marginTop: 36 }}>
             <Link className="btn soft" href="/blog">
               ← Volver a novedades

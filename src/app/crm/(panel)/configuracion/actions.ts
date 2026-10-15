@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth';
 import { escapeHtml, layoutEmail, mailConfigured, sendMail } from '@/lib/mail';
 import { getSettings, invalidateSettingsCache, saveSettings, type SiteSettings } from '@/lib/settings';
+import { getSmtpSummary, saveSmtp } from '@/lib/smtp';
 import { parseDateOnly } from '@/lib/dates';
 import { fail, firstZodError, formString, refreshCrm, success, type ActionState } from '@/lib/crm/action';
 
@@ -66,12 +67,49 @@ export async function saveSiteSettings(_prev: ActionState, fd: FormData): Promis
   return success('Configuración guardada. Ya se aplica en el sitio y en el chat.');
 }
 
+const smtpSchema = z.object({
+  host: z
+    .string()
+    .min(3, 'Ingresá el servidor de salida (ej. smtp.hostinger.com).')
+    .max(120)
+    .regex(/^[a-z0-9.-]+$/i, 'El servidor solo puede tener letras, números, puntos y guiones (sin https://).'),
+  port: z.coerce.number().int().refine((p) => p === 465 || p === 587, 'El puerto tiene que ser 465 (SSL) o 587.'),
+  user: z.string().email('El usuario es el correo completo de la casilla (ej. no-responder@transgas.com.ar).').max(160),
+  from: z.string().max(200),
+  pass: z.string().max(200),
+});
+
+/** Guarda el servidor de correo (la contraseña se cifra). Con la contraseña vacía conserva la ya guardada. */
+export async function saveSmtpSettings(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = smtpSchema.safeParse({
+    host: formString(fd, 'smtpHost').toLowerCase(),
+    port: formString(fd, 'smtpPort') || '465',
+    user: formString(fd, 'smtpUser').toLowerCase(),
+    from: formString(fd, 'smtpFrom'),
+    pass: typeof fd.get('smtpPass') === 'string' ? (fd.get('smtpPass') as string) : '',
+  });
+  if (!parsed.success) return fail(firstZodError(parsed.error));
+  const d = parsed.data;
+  const previous = await getSmtpSummary();
+  const hasStoredPass = previous.source === 'crm';
+  if (!d.pass && !hasStoredPass) return fail('Ingresá la contraseña de la casilla de correo.');
+  try {
+    await saveSmtp({ host: d.host, port: d.port, user: d.user, from: d.from || `Transgas <${d.user}>`, pass: d.pass || null });
+  } catch (e) {
+    console.error(e);
+    return fail('No se pudo guardar el servidor de correo. Revisá que el servidor tenga configurada la clave secreta (SUPABASE_SERVICE_ROLE_KEY o APP_SECRET).');
+  }
+  refreshCrm();
+  return success('Servidor de correo guardado. Probalo con el botón "Enviar mail de prueba".');
+}
+
 /** Envía un mail de prueba a los destinatarios guardados (verifica que el SMTP funcione). */
 export async function sendTestEmail(): Promise<ActionState> {
   await requireAdmin();
   invalidateSettingsCache();
   const s = await getSettings();
-  if (!mailConfigured()) return fail('El envío de mails no está configurado en el servidor (variables SMTP_HOST, SMTP_USER y SMTP_PASS).');
+  if (!(await mailConfigured())) return fail('Todavía no se configuró el servidor de correo. Completá y guardá el formulario "Servidor de correo" de esta página.');
   if (!s.notifyEmails.length) return fail('Primero guardá al menos un correo de aviso.');
   const res = await sendMail({
     to: s.notifyEmails,

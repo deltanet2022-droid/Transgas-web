@@ -12,12 +12,13 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/lib/chat/ruleBasedEngine.test.ts src/lib/leads/config.test.ts src/content/pages.test.ts",
+    "test": "tsx --test src/lib/chat/ruleBasedEngine.test.ts src/lib/leads/config.test.ts src/content/pages.test.ts src/lib/tariffRanges.test.ts",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:faqs": "tsx prisma/seed.ts --update-faqs",
+    "db:seed:news": "tsx prisma/seed.ts --update-news",
     "db:studio": "prisma studio"
   },
   "prisma": {

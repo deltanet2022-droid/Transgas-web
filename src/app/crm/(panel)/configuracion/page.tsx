@@ -3,9 +3,9 @@ import { ActionForm } from '@/components/crm/ActionForm';
 import { TestEmailButton } from '@/components/crm/TestEmailButton';
 import { Badge, Field, PageTitle } from '@/components/crm/ui';
 import { requireAdmin } from '@/lib/auth';
-import { mailConfigured } from '@/lib/mail';
 import { getSettings } from '@/lib/settings';
-import { saveSiteSettings } from './actions';
+import { getSmtpSummary } from '@/lib/smtp';
+import { saveSiteSettings, saveSmtpSettings } from './actions';
 
 export const metadata: Metadata = { title: 'Configuración' };
 
@@ -13,7 +13,7 @@ export default async function SettingsPage() {
   await requireAdmin();
   const s = await getSettings();
   const b = s.alertBanner;
-  const smtp = mailConfigured();
+  const smtp = await getSmtpSummary();
 
   return (
     <>
@@ -64,7 +64,7 @@ export default async function SettingsPage() {
 
           <h2 style={{ margin: '14px 0 0' }}>
             Avisos por mail al equipo{' '}
-            {smtp ? <Badge tone="ok">Servidor de correo configurado</Badge> : <Badge tone="warn">Falta configurar el servidor de correo</Badge>}
+            {smtp.configured ? <Badge tone="ok">Servidor de correo configurado</Badge> : <Badge tone="warn">Falta configurar el servidor de correo</Badge>}
           </h2>
           <Field
             label="Correos que reciben el aviso de cada contacto nuevo"
@@ -83,6 +83,50 @@ export default async function SettingsPage() {
               <input id="noticeDaysBefore" name="noticeDaysBefore" type="number" min={0} max={30} defaultValue={s.noticeDaysBefore} />
             </Field>
           </div>
+        </ActionForm>
+      </div>
+
+      <div className="crm-card" style={{ maxWidth: 900, marginTop: 16 }}>
+        <h2>
+          Servidor de correo{' '}
+          {smtp.configured ? (
+            <Badge tone="ok">{smtp.source === 'env' ? 'Configurado en el servidor (variables)' : 'Configurado'}</Badge>
+          ) : (
+            <Badge tone="warn">Sin configurar</Badge>
+          )}
+        </h2>
+        <p className="help" style={{ marginBottom: 12 }}>
+          Es la casilla desde la que el sitio envía los mails (avisos al equipo y avisos de vencimiento a los suscriptores). Si usás el correo de Hostinger:
+          hPanel → <em>Correos electrónicos</em> → creá una casilla (por ejemplo <b>no-responder@transgas.com.ar</b>). El servidor suele ser{' '}
+          <b>smtp.hostinger.com</b>, puerto <b>465</b>. La contraseña se guarda cifrada y no se vuelve a mostrar.
+        </p>
+        <ActionForm action={saveSmtpSettings} submitLabel="Guardar servidor de correo">
+          <div className="row">
+            <Field label="Servidor de salida (SMTP)" htmlFor="smtpHost">
+              <input id="smtpHost" name="smtpHost" type="text" required maxLength={120} defaultValue={smtp.host} autoComplete="off" />
+            </Field>
+            <Field label="Puerto" htmlFor="smtpPort">
+              <select id="smtpPort" name="smtpPort" defaultValue={String(smtp.port)}>
+                <option value="465">465 (SSL, recomendado)</option>
+                <option value="587">587 (STARTTLS)</option>
+              </select>
+            </Field>
+          </div>
+          <div className="row">
+            <Field label="Usuario (correo completo)" htmlFor="smtpUser">
+              <input id="smtpUser" name="smtpUser" type="email" required maxLength={160} defaultValue={smtp.user} placeholder="no-responder@transgas.com.ar" autoComplete="off" />
+            </Field>
+            <Field
+              label="Contraseña de la casilla"
+              htmlFor="smtpPass"
+              help={smtp.source === 'crm' ? 'Ya hay una contraseña guardada. Dejá vacío para conservarla.' : 'La que definiste al crear la casilla en Hostinger.'}
+            >
+              <input id="smtpPass" name="smtpPass" type="password" maxLength={200} autoComplete="new-password" placeholder={smtp.source === 'crm' ? '••••••••' : ''} />
+            </Field>
+          </div>
+          <Field label="Remitente (opcional)" htmlFor="smtpFrom" help='Cómo ve el nombre quien recibe el mail. Si queda vacío: "Transgas <la casilla>".'>
+            <input id="smtpFrom" name="smtpFrom" type="text" maxLength={200} defaultValue={smtp.source === 'crm' ? smtp.from : ''} placeholder="Transgas <no-responder@transgas.com.ar>" />
+          </Field>
         </ActionForm>
       </div>
 

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { prisma, safe } from '@/lib/db';
 import { formatDateOnly, todayAR } from '@/lib/dates';
+import { memo } from '@/lib/memo';
 import { getSettings, isBannerActive } from '@/lib/settings';
 
 /** Franjas superiores: aviso importante (CRM → Configuración), vencimiento vigente hoy y aviso de servicio en curso. */
@@ -8,18 +9,19 @@ export async function SiteBanners() {
   const today = todayAR();
   const [settings, due, active] = await Promise.all([
     getSettings(),
-    safe(
-      () =>
-        prisma.dueDate.findFirst({
-          where: { showFrom: { lte: today }, dueDate: { gte: today } },
-          orderBy: { dueDate: 'asc' },
-          include: { tariff: { select: { code: true } } },
-        }),
-      null,
+    memo(`due:${today.toISOString()}`, () =>
+      safe(
+        () =>
+          prisma.dueDate.findFirst({
+            where: { showFrom: { lte: today }, dueDate: { gte: today } },
+            orderBy: { dueDate: 'asc' },
+            include: { tariff: { select: { code: true } } },
+          }),
+        null,
+      ),
     ),
-    safe(
-      () => prisma.serviceStatus.findFirst({ where: { status: 'EN_CURSO' }, orderBy: { startsAt: 'desc' } }),
-      null,
+    memo('activeService', () =>
+      safe(() => prisma.serviceStatus.findFirst({ where: { status: 'EN_CURSO' }, orderBy: { startsAt: 'desc' } }), null),
     ),
   ]);
 

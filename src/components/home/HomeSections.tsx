@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Cooperative, Tariff, TariffDocument } from '@prisma/client';
 import { images, site } from '@/lib/site';
-import { groupTariffsForHome } from '@/lib/queries';
+import { annualRange, bimonthlyRange } from '@/lib/tariffRanges';
 import { ContactCards } from '@/components/site/ContactCards';
 
 export function Headline({
@@ -202,7 +202,6 @@ export function InfoPortal() {
 }
 
 export function TariffSection({ tariffs, doc }: { tariffs: Tariff[]; doc: TariffDocument | null }) {
-  const rows = groupTariffsForHome(tariffs);
   return (
     <section className="section tariff" id="tarifas">
       <div className="container">
@@ -230,18 +229,21 @@ export function TariffSection({ tariffs, doc }: { tariffs: Tariff[]; doc: Tariff
             <table>
               <thead>
                 <tr>
-                  <th>Tipo</th>
-                  <th>Subcategorías</th>
-                  <th>Referencia</th>
+                  <th>Categoría</th>
+                  <th>Consumo anual</th>
+                  <th>Aprox. por bimestre</th>
                 </tr>
               </thead>
               <tbody>
-                {rows.length ? (
-                  rows.map((r) => (
-                    <tr key={r.codes}>
-                      <td>{r.type}</td>
-                      <td>{r.codes}</td>
-                      <td>Consumo anual</td>
+                {tariffs.length ? (
+                  tariffs.map((t) => (
+                    <tr key={t.id}>
+                      <td>
+                        <b>{t.code}</b>
+                        <div style={{ color: 'var(--muted)', fontSize: '.68rem' }}>{t.type === 'SGP' ? 'Servicio general P' : 'Residencial'}</div>
+                      </td>
+                      <td>{annualRange(t.code, t.consumptionRange) ?? 'Según cuadro tarifario'}</td>
+                      <td>{bimonthlyRange(t.code) ?? '—'}</td>
                     </tr>
                   ))
                 ) : (
@@ -251,6 +253,9 @@ export function TariffSection({ tariffs, doc }: { tariffs: Tariff[]; doc: Tariff
                 )}
               </tbody>
             </table>
+            <p style={{ color: 'var(--muted)', fontSize: '.7rem', margin: '10px 4px 2px' }}>
+              Tu categoría se define según el consumo acumulado de los últimos seis bimestres. Valores en m³.
+            </p>
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ interface NewLead {
 export async function notifyNewLead(lead: NewLead): Promise<MailResult | { ok: false; reason: 'no_recipients' }> {
   const settings = await getSettings();
   if (!settings.notifyEmails.length) return { ok: false, reason: 'no_recipients' };
-  if (!mailConfigured()) return { ok: false, reason: 'not_configured' };
+  if (!(await mailConfigured())) return { ok: false, reason: 'not_configured' };
 
   const label = LEAD_TYPE_LABEL[lead.type];
   const rows: [string, string][] = [

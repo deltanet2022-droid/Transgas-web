@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
 import { parseArgDateTime } from '@/lib/dates';
-import { fail, firstZodError, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
   title: z.string().min(3, 'Ingresá un título.').max(140),
@@ -36,7 +36,7 @@ export async function saveServiceStatus(_prev: ActionState, fd: FormData): Promi
   if (id) await prisma.serviceStatus.update({ where: { id }, data });
   else await prisma.serviceStatus.create({ data });
   refreshCrm();
-  redirect('/crm/estado-servicio');
+  return saved('/crm/estado-servicio', 'Aviso guardado.');
 }
 
 export async function deleteServiceStatus(fd: FormData) {

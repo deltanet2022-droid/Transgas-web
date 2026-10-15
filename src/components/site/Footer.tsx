@@ -10,7 +10,7 @@ export async function Footer() {
         <div>
           <span className="footlogo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo-transgas.png" alt="Grupo Transgas" width={147} height={42} />
+            <img src="/brand/logo-transgas-white.png" alt="Grupo Transgas" width={175} height={50} loading="lazy" decoding="async" />
           </span>
           <p>{site.legalName} Servicio, infraestructura, información y comunidad.</p>
         </div>
@@ -53,6 +53,12 @@ export async function Footer() {
         <span>
           <Link href="/privacidad">Política de Privacidad</Link> · {site.address} · <a href={`tel:${telDigits(s.attentionPhone)}`}>{s.attentionPhone}</a>
         </span>
+      </div>
+      <div className="container footcredit">
+        Sitio desarrollado por{' '}
+        <a href="https://delta.net.ar" target="_blank" rel="noopener">
+          DELTA - Sistemas y Automatizaciones
+        </a>
       </div>
     </footer>
   );

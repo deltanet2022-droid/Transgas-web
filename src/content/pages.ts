@@ -76,12 +76,15 @@ export const PAGE_DEFS: PageDef[] = [
 <p>Los usuarios del servicio de gas natural se agrupan en categorías según el tipo de uso (residencial o servicio general) y su consumo durante el último año. Cada categoría tiene su propio cargo fijo y precio por consumo, que se detallan en el <a href="/tarifas">cuadro tarifario vigente</a>.</p>
 <blockquote><strong>¿Cómo sé cuál es la mía?</strong> La categoría figura en tu factura. Si tenés dudas o creés que no te corresponde, escribinos desde <a href="/contacto">contacto</a>.</blockquote>
 <h2>Categorías residenciales</h2>
-<p>Para hogares. Se subdividen según el consumo anual: <strong>R1 · R2-1 · R2-2 · R2-3 · R3-1 · R3-2 · R3-3 · R3-4</strong>.</p>
-<ul><li><strong>R1:</strong> consumos más bajos.</li><li><strong>R2 (subcategorías 1 a 3):</strong> consumos medios.</li><li><strong>R3 (subcategorías 1 a 4):</strong> consumos más altos.</li></ul>
+<p>Para hogares. Se subdividen según el consumo anual (en metros cúbicos, m³):</p>
+<ul><li><strong>R1:</strong> hasta 500 m³ (los consumos más bajos).</li><li><strong>R2-1:</strong> de 501 a 650 m³.</li><li><strong>R2-2:</strong> de 651 a 800 m³.</li><li><strong>R2-3:</strong> de 801 a 1.000 m³.</li><li><strong>R3-1:</strong> de 1.001 a 1.250 m³.</li><li><strong>R3-2:</strong> de 1.251 a 1.500 m³.</li><li><strong>R3-3:</strong> de 1.501 a 1.800 m³.</li><li><strong>R3-4:</strong> más de 1.800 m³ (los consumos más altos).</li></ul>
 <h2>Servicio General P (SGP)</h2>
-<p>Para comercios, oficinas y pequeñas industrias. Incluye las subcategorías <strong>SGP1 · SGP2 · SGP3-a · SGP3-b</strong>, también según el consumo anual.</p>
+<p>Para comercios, oficinas y pequeñas industrias. También se define por el consumo anual:</p>
+<ul><li><strong>SGP1:</strong> hasta 12.000 m³.</li><li><strong>SGP2:</strong> de 12.001 a 108.000 m³.</li><li><strong>SGP3-a:</strong> de 108.001 a 180.000 m³.</li><li><strong>SGP3-b:</strong> más de 180.000 m³.</li></ul>
+<h2>¿Y por bimestre?</h2>
+<p>Las facturas son bimestrales. La categoría se calcula con el consumo acumulado de los <strong>últimos seis bimestres</strong>, así que como referencia aproximada podés dividir los valores anuales por seis (por ejemplo, R1 equivale a hasta unos 83 m³ por bimestre). En <a href="/tarifas">Tarifas</a> ves esa equivalencia para cada categoría.</p>
 <h2>¿Puede cambiar mi categoría?</h2>
-<p>Sí. Como la categoría depende del consumo de los últimos doce meses, puede actualizarse si tu consumo cambia de manera sostenida. El cambio se refleja en tus próximas facturas.</p>`,
+<p>Sí. Como la categoría depende del consumo acumulado de los últimos seis bimestres, puede actualizarse si tu consumo cambia de manera sostenida. El cambio se refleja en tus próximas facturas.</p>`,
   },
   {
     slug: 'entender-factura',

@@ -8,7 +8,7 @@ import { parseArgDateTime } from '@/lib/dates';
 import { sanitizeRichText } from '@/lib/sanitize';
 import { slugify } from '@/lib/slug';
 import { deletePublicFile, UploadError, uploadPublicFile } from '@/lib/storage';
-import { fail, firstZodError, formFile, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formFile, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres.').max(160),
@@ -75,7 +75,7 @@ export async function saveNews(_prev: ActionState, fd: FormData): Promise<Action
   if (oldPath && (cover || removeCover) && coverImageUrl !== existing?.coverImageUrl) await deletePublicFile(oldPath);
 
   refreshCrm();
-  redirect('/crm/noticias');
+  return saved('/crm/noticias', 'Noticia guardada.');
 }
 
 export async function deleteNews(fd: FormData) {

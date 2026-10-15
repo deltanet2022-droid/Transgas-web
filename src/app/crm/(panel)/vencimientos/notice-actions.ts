@@ -11,7 +11,7 @@ export async function sendNoticeNow(dueDateId: string): Promise<ActionState> {
   await requireUser();
   const r = await sendDueNotices(dueDateId, BATCH);
   refreshCrm();
-  if (r.reason === 'not_configured') return fail('El envío de mails no está configurado en el servidor (SMTP_HOST, SMTP_USER y SMTP_PASS).');
+  if (r.reason === 'not_configured') return fail('Todavía no se configuró el servidor de correo. Cargalo en Configuración → Servidor de correo.');
   if (r.reason === 'not_found') return fail('Ese vencimiento ya no existe.');
   if (r.sent === 0 && r.failed === 0) return success('No hay suscriptores pendientes: todos los suscriptores activos ya recibieron este aviso.');
   const parts = [`Enviados: ${r.sent}`];

@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   const clientNumber = typeof body.clientNumber === 'string' ? body.clientNumber.trim().slice(0, 30) : '';
   if (!EMAIL_RE.test(email) || email.length > 160) return NextResponse.json({ ok: false, error: 'Ingresá un correo válido.' }, { status: 422 });
   if (body.privacidad !== true) return NextResponse.json({ ok: false, error: 'Tenés que aceptar la Política de Privacidad para suscribirte.' }, { status: 422 });
-  if (!mailConfigured()) return NextResponse.json({ ok: false, error: 'Este servicio todavía no está disponible. Probá más adelante.' }, { status: 503 });
+  if (!(await mailConfigured())) return NextResponse.json({ ok: false, error: 'Este servicio todavía no está disponible. Probá más adelante.' }, { status: 503 });
 
   const existing = await prisma.subscriber.findUnique({ where: { email } });
   if (existing?.confirmedAt && !existing.unsubscribedAt) {

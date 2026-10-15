@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { HelpAside, PageBody, PageHeader, SosBar, relatedSafety, relatedUsers } from '@/components/site/PageParts';
 import { getPageDef } from '@/content/pages';
 import { prisma, safe } from '@/lib/db';
+import { memo } from '@/lib/memo';
 import { sanitizeRichText } from '@/lib/sanitize';
 import { fillTokens } from '@/lib/tokens';
 
@@ -10,7 +11,7 @@ import { fillTokens } from '@/lib/tokens';
 export async function getEffectivePage(slug: string) {
   const def = getPageDef(slug);
   if (!def) return null;
-  const row = await safe(() => prisma.page.findUnique({ where: { slug } }), null);
+  const row = await memo(`page:${slug}`, () => safe(() => prisma.page.findUnique({ where: { slug } }), null));
   return {
     def,
     edited: !!row,

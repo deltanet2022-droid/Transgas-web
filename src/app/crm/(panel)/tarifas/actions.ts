@@ -7,7 +7,7 @@ import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
 import { parseDateOnly } from '@/lib/dates';
 import { deletePublicFile, UploadError, uploadPublicFile } from '@/lib/storage';
-import { fail, firstZodError, formFile, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formFile, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const tariffSchema = z.object({
   code: z.string().min(1, 'Ingresá el código de la categoría (ej. R1, SGP2).').max(20, 'El código es demasiado largo.'),
@@ -50,7 +50,7 @@ export async function saveTariff(_prev: ActionState, fd: FormData): Promise<Acti
     return fail('No se pudo guardar la categoría.');
   }
   refreshCrm();
-  redirect('/crm/tarifas');
+  return saved('/crm/tarifas', 'Categoría guardada.');
 }
 
 export async function deleteTariff(fd: FormData) {
@@ -93,7 +93,7 @@ export async function uploadTariffDocument(_prev: ActionState, fd: FormData): Pr
     await tx.tariffDocument.create({ data: { title, fileUrl, storagePath, validFrom, isCurrent: makeCurrent } });
   });
   refreshCrm();
-  redirect('/crm/tarifas');
+  return saved('/crm/tarifas', 'Cuadro tarifario cargado.');
 }
 
 export async function setCurrentTariffDocument(fd: FormData) {

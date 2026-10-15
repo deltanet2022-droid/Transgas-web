@@ -1,14 +1,24 @@
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import type { ActionState } from '@/lib/crm/action';
 
-export function SubmitButton({ children = 'Guardar', className = 'cbtn p' }: { children?: React.ReactNode; className?: string }) {
+export function SubmitButton({
+  children = 'Guardar',
+  className = 'cbtn p',
+  leaving = false,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  /** Ya se guardó y se está volviendo al listado. */
+  leaving?: boolean;
+}) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className={className} disabled={pending}>
-      {pending ? 'Guardando…' : children}
+    <button type="submit" className={className} disabled={pending || leaving}>
+      {leaving ? 'Guardado ✓' : pending ? 'Guardando…' : children}
     </button>
   );
 }
@@ -27,12 +37,16 @@ export function ActionForm({
   resetOnSuccess?: boolean;
   extraActions?: React.ReactNode;
 }) {
+  const router = useRouter();
   const [state, formAction] = useFormState(async (prev: ActionState, fd: FormData) => {
     const res = await action(prev, fd);
     if (res?.ok && resetOnSuccess) formRef.current?.reset();
+    // Guardó bien y hay que volver al listado: navegamos desde acá, sin esperar a que el servidor arme la otra página.
+    if (res?.ok && res.redirectTo) router.push(res.redirectTo);
     return res;
   }, null as ActionState);
   const formRef = useRef<HTMLFormElement>(null);
+  const leaving = !!state?.ok && !!state.redirectTo;
 
   return (
     <form action={formAction} ref={formRef} className="cform">
@@ -48,7 +62,7 @@ export function ActionForm({
         </div>
       )}
       <div className="acts">
-        <SubmitButton>{submitLabel ?? 'Guardar'}</SubmitButton>
+        <SubmitButton leaving={leaving}>{submitLabel ?? 'Guardar'}</SubmitButton>
         {extraActions}
       </div>
     </form>

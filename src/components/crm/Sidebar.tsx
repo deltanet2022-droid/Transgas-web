@@ -37,7 +37,7 @@ export function Sidebar({ user }: { user: { email: string; name: string | null; 
     <aside className="crm-side">
       <Link className="brandrow" href="/crm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/logo-transgas.png" alt="Transgas" width={119} height={34} />
+        <img src="/brand/logo-transgas-white.png" alt="Transgas" width={119} height={34} />
         <span>CRM</span>
       </Link>
       <nav aria-label="CRM">

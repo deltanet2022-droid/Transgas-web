@@ -8,7 +8,9 @@ export const prisma =
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Una sola instancia (y un solo pool de conexiones) por proceso, también en producción:
+// Next puede cargar este módulo desde varias rutas y cada copia abriría conexiones propias.
+globalForPrisma.prisma = prisma;
 
 /**
  * Ejecuta una consulta pública y devuelve `fallback` si la base no responde,

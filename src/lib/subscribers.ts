@@ -61,7 +61,7 @@ export const activeSubscribers = () => prisma.subscriber.findMany({ where: { con
  * Es reanudable: cada envío queda registrado, así que correrlo de nuevo nunca duplica.
  */
 export async function sendDueNotices(dueDateId: string, limit = 100): Promise<NoticeRunResult> {
-  if (!mailConfigured()) return { ok: false, sent: 0, failed: 0, pending: 0, reason: 'not_configured' };
+  if (!(await mailConfigured())) return { ok: false, sent: 0, failed: 0, pending: 0, reason: 'not_configured' };
   const due = await prisma.dueDate.findUnique({ where: { id: dueDateId }, include: { tariff: { select: { code: true } } } });
   if (!due) return { ok: false, sent: 0, failed: 0, pending: 0, reason: 'not_found' };
 

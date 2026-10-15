@@ -1,32 +1,33 @@
 import 'server-only';
 import nodemailer, { type Transporter } from 'nodemailer';
 import { site } from '@/lib/site';
+import { getSmtpConfig, isMailConfigured, type SmtpConfig } from '@/lib/smtp';
 
 /**
  * Envío de mails por SMTP (por ejemplo, el correo del dominio en Hostinger).
- *
- *   SMTP_HOST, SMTP_PORT (465 = SSL, 587 = STARTTLS), SMTP_USER, SMTP_PASS
- *   MAIL_FROM  →  "Transgas <no-responder@transgas.com.ar>"
+ * El servidor se configura desde el CRM → Configuración (ver lib/smtp.ts); como alternativa
+ * se pueden usar las variables SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS y MAIL_FROM.
  */
-export function mailConfigured(): boolean {
-  return !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-}
+export const mailConfigured = isMailConfigured;
 
-let transporter: Transporter | null = null;
-function getTransporter(): Transporter {
-  if (!transporter) {
-    const port = Number(process.env.SMTP_PORT || 465);
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port,
-      secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      connectionTimeout: 10_000,
-      greetingTimeout: 10_000,
-      socketTimeout: 20_000,
-    });
+let transporter: { sig: string; t: Transporter } | null = null;
+function getTransporter(c: SmtpConfig): Transporter {
+  const sig = `${c.host}|${c.port}|${c.secure}|${c.user}|${c.pass}`;
+  if (!transporter || transporter.sig !== sig) {
+    transporter = {
+      sig,
+      t: nodemailer.createTransport({
+        host: c.host,
+        port: c.port,
+        secure: c.secure,
+        auth: { user: c.user, pass: c.pass },
+        connectionTimeout: 10_000,
+        greetingTimeout: 10_000,
+        socketTimeout: 20_000,
+      }),
+    };
   }
-  return transporter;
+  return transporter.t;
 }
 
 export interface MailInput {
@@ -40,10 +41,11 @@ export interface MailInput {
 export type MailResult = { ok: true } | { ok: false; reason: 'not_configured' | 'error'; message?: string };
 
 export async function sendMail(input: MailInput): Promise<MailResult> {
-  if (!mailConfigured()) return { ok: false, reason: 'not_configured' };
+  const config = await getSmtpConfig();
+  if (!config) return { ok: false, reason: 'not_configured' };
   try {
-    await getTransporter().sendMail({
-      from: process.env.MAIL_FROM || `Transgas <${process.env.SMTP_USER}>`,
+    await getTransporter(config).sendMail({
+      from: config.from,
       to: input.to,
       subject: input.subject,
       html: input.html,

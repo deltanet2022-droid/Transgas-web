@@ -18,13 +18,18 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
+  // El aviso de la librería ("usá getUser()") no aplica: acá solo miramos si hay sesión y se verifica más adelante.
+  (supabase.auth as unknown as { suppressGetSessionWarning: boolean }).suppressGetSessionWarning = true;
+
+  // Acá solo se decide si hay una sesión (se lee de la cookie y se renueva si venció, sin llamar a la red en cada
+  // clic). La verificación real contra Supabase la hace `requireUser` (lib/auth.ts) en cada página y acción.
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
   // Rutas del CRM que se pueden abrir sin sesión (ingreso, recuperación de contraseña y vuelta del mail).
   const isPublic = ['/crm/login', '/crm/recuperar', '/crm/auth/callback'].includes(request.nextUrl.pathname);
-  if (!user && !isPublic) {
+  if (!session && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/crm/login';
     url.search = '';

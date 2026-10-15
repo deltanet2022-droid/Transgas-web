@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
-import { fail, firstZodError, formString, refreshCrm, type ActionState } from '@/lib/crm/action';
+import { fail, firstZodError, formString, refreshCrm, saved, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
   name: z.string().min(2, 'Ingresá el nombre de la cooperativa o localidad.').max(100),
@@ -42,7 +42,7 @@ export async function saveCooperative(_prev: ActionState, fd: FormData): Promise
   if (id) await prisma.cooperative.update({ where: { id }, data });
   else await prisma.cooperative.create({ data });
   refreshCrm();
-  redirect('/crm/cooperativas');
+  return saved('/crm/cooperativas', 'Cooperativa guardada.');
 }
 
 export async function deleteCooperative(fd: FormData) {

@@ -227,7 +227,7 @@ export function ChatWidget() {
       <section className={`chatpanel${open ? ' open' : ''}`} id="chatpanel" role="dialog" aria-label={`Asistente virtual ${ASSISTANT_NAME}`} aria-hidden={!open}>
         <div className="chathead">
           <div className="avatar">
-            <Avatar size={46} />
+            <Avatar size={46} talking={busy} />
           </div>
           <div>
             <b>{ASSISTANT_NAME} · Asistente de Transgas</b>
@@ -250,7 +250,7 @@ export function ChatWidget() {
             ) : (
               <div key={m.id} className="msg">
                 <span className="mini-av" aria-hidden>
-                  <Avatar size={30} animated={false} />
+                  <Avatar size={30} animated={false} talking={!!m.loading} />
                 </span>
                 <div className="msgcol">
                   <div className={`bubble bot${m.emergency ? ' alert' : ''}`}>

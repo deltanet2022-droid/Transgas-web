@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { PrismaClient, type TariffType } from '@prisma/client';
 import { createClient } from '@supabase/supabase-js';
 import { faqs } from './seed-data/faqs';
+import { news } from './seed-data/news';
 import { cooperatives, installers } from './seed-data/directories';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -96,38 +97,25 @@ async function seedTariffs() {
   }
 }
 
+/**
+ * Noticias iniciales. Por defecto solo crea las que faltan (no pisa ediciones del CRM).
+ * Con --update-news reemplaza título, resumen, cuerpo e imagen de estas dos noticias por la versión del seed.
+ */
 async function seedNews() {
-  const items = [
-    {
-      slug: 'bienvenidos-al-nuevo-sitio-de-transgas',
-      title: 'Bienvenidos al nuevo sitio de Transgas',
-      excerpt: 'Renovamos nuestra web para que gestionar tu servicio, consultar tarifas y encontrar información de seguridad sea más simple.',
-      category: 'Institucional',
-      body:
-        '<p>Estrenamos un nuevo sitio pensado para acompañarte en cada gestión: <strong>factura, trámites, tarifas, seguridad y emergencias</strong>, todo a pocos clics.</p>' +
-        '<h2>¿Qué hay de nuevo?</h2><ul><li>Formularios de autogestión para informar pagos, medidores y pedir nuevos servicios.</li><li>Un espacio de <em>Estado del servicio</em> con cortes programados y avisos por zona.</li><li>Un asistente virtual para orientarte las 24 horas.</li></ul>' +
-        '<p>Si encontrás algo para mejorar, escribinos desde la sección de <a href="/contacto">contacto</a>.</p>',
-      publishedAt: new Date(Date.now() - 2 * DAY),
-    },
-    {
-      slug: 'recomendaciones-para-el-uso-seguro-del-gas-en-invierno',
-      title: 'Recomendaciones para el uso seguro del gas en invierno',
-      excerpt: 'Con el frío aumenta el uso de estufas y calefones. Repasá estos consejos para cuidarte a vos y a tu familia.',
-      category: 'Seguridad',
-      body:
-        '<p>En invierno aumenta el consumo de gas y también los riesgos. Tené en cuenta:</p>' +
-        '<ul><li>Ventilá siempre los ambientes donde haya artefactos encendidos.</li><li>Revisá tus instalaciones con un <a href="/profesionales/gasistas-matriculados">gasista matriculado</a>.</li><li>No uses hornallas ni el horno para calefaccionar.</li><li>Ante olor a gas, no accionés interruptores y llamá al <strong>0800-777-8427</strong>.</li></ul>' +
-        '<p>Conocé más en nuestra guía de <a href="/seguridad/monoxido-de-carbono">prevención de monóxido de carbono</a>.</p>',
-      publishedAt: new Date(Date.now() - 1 * DAY),
-    },
-  ];
+  const update = process.argv.includes('--update-news');
   let created = 0;
-  for (const n of items) {
-    if (await prisma.news.findUnique({ where: { slug: n.slug } })) continue;
-    await prisma.news.create({ data: { ...n, status: 'PUBLISHED' } });
-    created++;
+  let updated = 0;
+  for (const { daysAgo, ...n } of news) {
+    const existing = await prisma.news.findUnique({ where: { slug: n.slug } });
+    if (!existing) {
+      await prisma.news.create({ data: { ...n, status: 'PUBLISHED', publishedAt: new Date(Date.now() - daysAgo * DAY) } });
+      created++;
+    } else if (update) {
+      await prisma.news.update({ where: { id: existing.id }, data: n });
+      updated++;
+    }
   }
-  console.log(`· Noticias: ${created} creadas.`);
+  console.log(`· Noticias: ${created} creadas, ${updated} actualizadas.${update ? '' : ' Para actualizar las existentes: npm run db:seed:news'}`);
 }
 
 async function seedDueDate() {

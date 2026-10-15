@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { forgetVerifiedSessions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { createClient } from '@/lib/supabase/server';
 import { fail, formString, success, type ActionState } from '@/lib/crm/action';
@@ -37,6 +38,7 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
 
 export async function signOut() {
   await createClient().auth.signOut();
+  forgetVerifiedSessions();
   redirect('/crm/login');
 }
 

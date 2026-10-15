@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { HelpAside, PageBody, PageHeader, relatedUsers } from '@/components/site/PageParts';
 import { formatDateOnly } from '@/lib/dates';
 import { getActiveTariffs, getCurrentTariffDocument } from '@/lib/queries';
+import { annualRange, bimonthlyRange } from '@/lib/tariffRanges';
 
 export const metadata: Metadata = {
   title: 'Tarifas',
@@ -58,7 +59,8 @@ export default async function TarifasPage() {
                     <th>Categoría</th>
                     <th>Tipo</th>
                     <th>Detalle</th>
-                    <th>Referencia</th>
+                    <th>Consumo anual</th>
+                    <th>Aprox. por bimestre</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -73,12 +75,13 @@ export default async function TarifasPage() {
                           {t.name}
                           {t.description && <div style={{ color: 'var(--muted)', fontSize: '.72rem', marginTop: 2 }}>{t.description}</div>}
                         </td>
-                        <td>{t.consumptionRange ?? 'Consumo anual'}</td>
+                        <td>{annualRange(t.code, t.consumptionRange) ?? 'Según cuadro tarifario'}</td>
+                        <td>{bimonthlyRange(t.code) ?? '—'}</td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4}>Las categorías se publican en el cuadro tarifario vigente.</td>
+                      <td colSpan={5}>Las categorías se publican en el cuadro tarifario vigente.</td>
                     </tr>
                   )}
                 </tbody>
