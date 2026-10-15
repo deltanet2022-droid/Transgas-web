@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageBody, PageHeader, HelpAside } from '@/components/site/PageParts';
 import { formatDateTime } from '@/lib/dates';
 import { getServiceStatusList } from '@/lib/queries';
-import { site } from '@/lib/site';
+import { getSettings, telDigits } from '@/lib/settings';
 
 export const metadata: Metadata = {
   title: 'Estado del servicio',
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const LABEL = { EN_CURSO: 'En curso', PROGRAMADO: 'Programado', RESUELTO: 'Resuelto' } as const;
 
 export default async function EstadoDelServicioPage() {
-  const items = await getServiceStatusList();
+  const [items, s] = await Promise.all([getServiceStatusList(), getSettings()]);
   const active = items.filter((i) => i.status === 'EN_CURSO').length;
 
   return (
@@ -29,15 +29,15 @@ export default async function EstadoDelServicioPage() {
             <div className="card static">
               <h3>¿Te quedaste sin gas?</h3>
               <p>Si no hay un aviso para tu zona, reportá la falta de suministro.</p>
-              <a className="btn primary" href={`tel:${site.supplyPhoneTel}`}>
-                Llamar al {site.supplyPhone}
+              <a className="btn primary" href={`tel:${telDigits(s.supplyPhone)}`}>
+                Llamar al {s.supplyPhone}
               </a>
             </div>
             <div className="card static">
               <h3>¿Olor a gas?</h3>
               <p>Eso es una emergencia: salí del lugar y llamá desde afuera.</p>
-              <a className="btn navy" href={`tel:${site.emergencyPhoneTel}`}>
-                {site.emergencyPhone}
+              <a className="btn navy" href={`tel:${telDigits(s.emergencyPhone)}`}>
+                {s.emergencyPhone}
               </a>
             </div>
             <HelpAside links={[{ label: 'Seguridad', href: '/seguridad' }, { label: 'Contacto', href: '/contacto' }]} title="Más información" />

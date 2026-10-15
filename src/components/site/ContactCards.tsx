@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { site } from '@/lib/site';
+import { getSettings, telDigits } from '@/lib/settings';
 import { AlertIcon, ClockIcon, ListIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/ui/Icons';
 
 /** Cards de contacto y emergencia (mismas que la home de referencia). Se usan en / y /contacto. */
-export function ContactCards() {
+export async function ContactCards() {
+  const s = await getSettings();
   return (
     <div className="contactgrid">
       <article className="card contact static">
@@ -25,7 +27,7 @@ export function ContactCards() {
             </span>
             <div>
               <b>Teléfono</b>
-              <a href={`tel:${site.phoneTel}`}>{site.phone}</a>
+              <a href={`tel:${telDigits(s.attentionPhone)}`}>{s.attentionPhone}</a>
             </div>
           </div>
           <div className="contactitem">
@@ -72,15 +74,15 @@ export function ContactCards() {
         <p>Canales prioritarios publicados por Transgas para situaciones que requieren atención.</p>
         <div className="emergency-box">
           <small>EMERGENCIAS</small>
-          <a className="emergency-number" href={`tel:${site.emergencyPhoneTel}`}>
-            {site.emergencyPhone}
+          <a className="emergency-number" href={`tel:${telDigits(s.emergencyPhone)}`}>
+            {s.emergencyPhone}
           </a>
           <small style={{ marginTop: 10 }}>También publicado por Transgas para emergencias</small>
         </div>
         <div className="emergency-box">
           <small>FALTA DE SUMINISTRO</small>
-          <a className="supply-number" href={`tel:${site.supplyPhoneTel}`}>
-            {site.supplyPhone}
+          <a className="supply-number" href={`tel:${telDigits(s.supplyPhone)}`}>
+            {s.supplyPhone}
           </a>
         </div>
         <div className="contactlist">

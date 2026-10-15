@@ -28,6 +28,8 @@ const PATHS = [
   '/contacto',
   '/estado-del-servicio',
   '/blog',
+  '/avisos',
+  '/privacidad',
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

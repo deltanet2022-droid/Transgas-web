@@ -22,6 +22,7 @@ test('valida obligatorios, email, teléfono, números, fechas y selects', () => 
     fechaPago: '2026-10-10',
     monto: '15200,50',
     medioPago: 'Transferencia bancaria',
+    privacidad: true,
   });
   assert.equal(ok.ok, true);
   if (ok.ok) assert.equal(ok.values.name, 'Ana Pérez');
@@ -29,7 +30,7 @@ test('valida obligatorios, email, teléfono, números, fechas y selects', () => 
 
 test('el checkbox obligatorio de factura electrónica exige aceptación', () => {
   const cfg = LEAD_FORMS.FACTURA_ELECTRONICA;
-  const base = { name: 'Ana', email: 'a@b.co', nroCliente: '1', dni: '30111222' };
+  const base = { name: 'Ana', email: 'a@b.co', nroCliente: '1', dni: '30111222', privacidad: true };
   assert.equal(validateLead(cfg, { ...base, aceptaFacturaMail: false }).ok, false);
   assert.equal(validateLead(cfg, { ...base, aceptaFacturaMail: true }).ok, true);
 });
@@ -45,6 +46,7 @@ test('ignora campos desconocidos y separa columnas de extraData', () => {
     tipoUsuario: 'Residencial',
     domicilio: 'Calle 1',
     redEnCalle: 'Sí',
+    privacidad: true,
     isAdmin: true,
   });
   assert.equal(res.ok, true);
@@ -64,4 +66,14 @@ test('el CSV escapa comillas y neutraliza fórmulas de Excel', () => {
   assert.ok(csv.includes('"dice ""hola"""'));
   assert.ok(csv.includes(`"'=HYPERLINK(""x"")"`));
   assert.ok(csv.includes(`"'+5493385"`));
+});
+
+test('todos los formularios exigen el consentimiento de la política de privacidad (Ley 25.326)', () => {
+  for (const t of LEAD_TYPES) {
+    const field = LEAD_FORMS[t].fields.find((f) => f.name === 'privacidad');
+    assert.ok(field && field.required && field.type === 'checkbox', t);
+  }
+  const res = validateLead(LEAD_FORMS.CONTACTO, { name: 'Ana', email: 'a@b.co', asunto: 'Otro', message: 'Hola', privacidad: false });
+  assert.equal(res.ok, false);
+  if (!res.ok) assert.ok(res.errors.privacidad);
 });

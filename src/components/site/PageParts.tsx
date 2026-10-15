@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { site } from '@/lib/site';
+import { getSettings, telDigits } from '@/lib/settings';
 
 export interface Crumb {
   label: string;
@@ -60,15 +61,16 @@ export function PageBody({ children, aside }: { children: React.ReactNode; aside
 }
 
 /** Barra de emergencias, bien visible (se usa sobre todo en las páginas de seguridad). */
-export function SosBar({ title = 'Ante una emergencia, llamá al', text, flush }: { title?: string; text?: string; flush?: boolean }) {
+export async function SosBar({ title = 'Ante una emergencia, llamá al', text, flush }: { title?: string; text?: string; flush?: boolean }) {
+  const s = await getSettings();
   return (
     <div className="sos" role="alert" style={flush ? { marginBottom: 0 } : undefined}>
       <div>
         <b>{title}</b>
         <span>{text ?? 'Línea de emergencias de Transgas, las 24 horas. Hacelo desde un lugar seguro y abierto.'}</span>
       </div>
-      <a className="big" href={`tel:${site.emergencyPhoneTel}`}>
-        {site.emergencyPhone}
+      <a className="big" href={`tel:${telDigits(s.emergencyPhone)}`}>
+        {s.emergencyPhone}
       </a>
     </div>
   );

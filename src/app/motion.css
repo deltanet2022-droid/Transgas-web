@@ -132,3 +132,28 @@
 /* ───── Cabecera: que el menú no se parta en dos líneas con el logo ───── */
 .nav > a, .navdrop > button { white-space: nowrap; }
 @media (max-width: 1399px) { .brand .brandtxt { display: none; } }
+
+/* ───── Aviso importante editable (CRM → Configuración) ───── */
+.strip.alert-danger { background: #b42318; color: #fff; }
+.strip.alert-info { background: var(--n2); color: #fff; }
+.strip.alert .pillmini { background: #ffffff2e; }
+
+/* ───── Aviso de privacidad en formularios ───── */
+.privnote { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--p2); border: 1px solid #cce2ee; font-size: .74rem; line-height: 1.5; color: #33495d; }
+.privnote a { color: var(--b); font-weight: 700; text-decoration: underline; }
+
+/* ───── Texto editable (páginas y noticias): listas numeradas como pasos y citas como avisos ───── */
+.prose ol { list-style: none; counter-reset: s; padding: 0; display: grid; gap: 12px; margin: 18px 0 20px; }
+.prose ol > li { counter-increment: s; position: relative; padding: 16px 16px 16px 60px; background: #fff; border: 1px solid var(--line); border-radius: 16px; margin: 0; }
+.prose ol > li:before { content: counter(s); position: absolute; left: 16px; top: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--b); color: #fff; font: 800 .85rem Manrope; display: grid; place-items: center; }
+.prose li > p { margin: 0; }
+.prose ol > li > strong:first-child, .prose ol > li > p:first-child > strong:first-child { color: var(--n2); }
+.prose blockquote { border-left: 4px solid var(--c); background: var(--p2); border-radius: 0 14px 14px 0; padding: 14px 18px; margin: 20px 0; }
+.prose blockquote p { margin: 0; }
+
+/* ───── Accesibilidad: contraste de textos chicos y foco visible ───── */
+.chatnote { color: #56697b; }
+.chatnote a { color: var(--b); text-decoration: underline; }
+.field .hint, .help { color: #53667a; }
+.navdrop > button:focus-visible, .nav > a:focus-visible, .btn:focus-visible, .qq:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
+.crm-side nav a:focus-visible, .cbtn:focus-visible { outline: 3px solid var(--c); outline-offset: 2px; }

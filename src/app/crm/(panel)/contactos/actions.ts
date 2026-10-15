@@ -1,8 +1,9 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
-import { requireUser } from '@/lib/auth';
+import { requireAdmin, requireUser } from '@/lib/auth';
 import { fail, firstZodError, formString, refreshCrm, success, type ActionState } from '@/lib/crm/action';
 
 const schema = z.object({
@@ -23,4 +24,13 @@ export async function updateLead(_prev: ActionState, fd: FormData): Promise<Acti
   }
   refreshCrm();
   return success('Contacto actualizado.');
+}
+
+/** Derecho de supresión (Ley 25.326): elimina el contacto de forma definitiva. Solo administradores. */
+export async function deleteLead(fd: FormData) {
+  await requireAdmin();
+  const id = formString(fd, 'id');
+  if (id) await prisma.lead.delete({ where: { id } }).catch(() => null);
+  refreshCrm();
+  redirect('/crm/contactos');
 }

@@ -77,14 +77,14 @@ export function Header() {
                 </button>
                 <div className="navmenu">
                   {item.children.map((c) => (
-                    <Link key={c.href} href={c.href} className={pathname === c.href ? 'active' : ''}>
+                    <Link key={c.href} href={c.href} className={pathname === c.href ? 'active' : ''} aria-current={pathname === c.href ? 'page' : undefined}>
                       {c.label}
                     </Link>
                   ))}
                 </div>
               </div>
             ) : (
-              <Link key={item.label} href={item.href!} className={isActive(item) ? 'active' : ''}>
+              <Link key={item.label} href={item.href!} className={isActive(item) ? 'active' : ''} aria-current={isActive(item) ? 'page' : undefined}>
                 {item.label}
               </Link>
             ),

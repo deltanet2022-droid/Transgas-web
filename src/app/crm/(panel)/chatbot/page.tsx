@@ -45,7 +45,7 @@ export default async function ChatHistoryPage({ searchParams }: { searchParams: 
 
   return (
     <>
-      <PageTitle title="Historial del chatbot" sub="Conversaciones del asistente: si se respondió con una FAQ o se derivó a WhatsApp." />
+      <PageTitle title="Historial del chatbot" sub="Conversaciones del asistente: si se respondió con una FAQ o se derivó a WhatsApp." action={{ href: '/crm/chatbot/metricas', label: 'Ver métricas' }} />
 
       <div className="crm-grid c3" style={{ marginBottom: 16 }}>
         <div className="crm-card stat" style={{ padding: 16 }}>

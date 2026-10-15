@@ -181,3 +181,61 @@ API de IA (solo el stub) · WhatsApp Business API (solo el enlace `wa.me`) · av
 - **Pestaña del navegador y Google:** `src/app/icon.png`, `apple-icon.png` y `favicon.ico` (llama dorada sobre azul, con los colores del logo), e imagen para compartir `opengraph-image.png`. Con `ALLOW_INDEXING=true` se agregan datos estructurados (JSON-LD) con nombre, logo, teléfono y dirección. Google tarda días o semanas en actualizar el ícono y el logo en sus resultados.
 - **Mapa:** coordenadas reales de Transgas (General Levalle) en `src/lib/site.ts` (`lat`, `lng`, `mapsEmbed`, `mapsLink`).
 - **Animaciones:** solo CSS + un pequeño componente (`ScrollReveal.tsx`), sin librerías. Respetan la preferencia «reducir movimiento» del sistema. Estilos en `src/app/motion.css`.
+
+---
+
+## 13. Fase 2
+
+### Qué incluye
+| Módulo | Dónde |
+|---|---|
+| **Política de Privacidad** (Ley 25.326) y aviso + casilla de consentimiento obligatoria en todos los formularios y en la suscripción; se guarda la fecha y la versión aceptada | `/privacidad`, `src/lib/privacy.ts` |
+| **Aviso por mail al equipo** por cada contacto nuevo | CRM → Configuración |
+| **Páginas editables** (tarifa social, zona fría, categorías, factura, inquilinos, derechos, seguridad, privacidad) con «Restaurar original» | CRM → Páginas (`src/content/pages.ts` guarda el original) |
+| **Teléfonos y aviso importante (banner)** editables; se actualizan en el sitio, el chat y las FAQ | CRM → Configuración |
+| **Métricas del chatbot**: lo que no supo responder (con botón «Crear FAQ» ya cargado) y las FAQ más usadas | CRM → Chatbot → Ver métricas |
+| **Estadísticas de visitas** propias, sin cookies y sin guardar la IP | CRM → Estadísticas |
+| **Avisos de vencimiento por mail**: suscripción con confirmación (doble opt-in), baja con un clic, envío manual y automático | `/avisos`, CRM → Suscriptores y Vencimientos |
+| **Seguridad del CRM**: cambiar contraseña, «olvidé mi contraseña», **verificación en dos pasos (2FA)** y, para el admin, restablecer contraseña / quitar 2FA de otro usuario | CRM → Mi cuenta, `/crm/recuperar` |
+| Eliminación de un contacto, suscriptor o conversación (derecho de supresión) | CRM (solo admin) |
+
+### Puesta en marcha de la Fase 2
+```bash
+git pull
+npm install
+npm run db:deploy        # aplica la migración nueva (tablas de configuración, páginas, visitas, suscriptores)
+npm run build
+```
+Después, en **hPanel → Node.js App → Variables de entorno** agregá (ver `.env.example`):
+
+| Variable | Para qué |
+|---|---|
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | Envío de mails. Con el correo del dominio en Hostinger: hPanel → *Correos electrónicos* → crear una casilla (por ejemplo `no-responder@transgas.com.ar`) → *Configurar dispositivo* muestra host y puerto (suele ser `smtp.hostinger.com`, puerto 465). |
+| `NOTIFY_EMAILS`, `PRIVACY_EMAIL` | Valores iniciales; después se editan desde CRM → Configuración. |
+| `CRON_SECRET` | Clave larga y aleatoria para los avisos automáticos. |
+| `NOTICE_BATCH` | Máximo de mails por ejecución (default 100). |
+| `TRACK_SECRET` | Opcional, para el hash anónimo de visitas. |
+
+Probá el correo en **CRM → Configuración → Enviar mail de prueba**.
+
+### Avisos automáticos de vencimiento (Cron Job de Hostinger)
+hPanel → **Avanzado → Cron Jobs** → nuevo cron cada hora (o una vez por día a la mañana) con el comando:
+```bash
+curl -s "https://TU-DOMINIO/api/cron/avisos?secret=TU_CRON_SECRET" > /dev/null
+```
+Cada ejecución envía, a los suscriptores confirmados, el aviso de los vencimientos que están a *N* días o menos (CRM → Configuración → «días de anticipación»). Es reanudable y **nunca duplica** envíos. También se puede enviar a mano desde CRM → Vencimientos.
+
+### Configuración en Supabase para la seguridad del CRM
+1. **Authentication → URL Configuration**: *Site URL* = `https://TU-DOMINIO`; en *Redirect URLs* agregá `https://TU-DOMINIO/crm/auth/callback`.
+2. **Authentication → Emails / SMTP Settings**: el mail de «olvidé mi contraseña» lo envía Supabase. Con su correo de prueba hay un límite muy bajo por hora; conviene configurar el mismo SMTP del dominio.
+3. **Authentication → Multi-Factor (MFA)**: verificar que **TOTP** esté habilitado (suele estarlo por defecto).
+4. El enlace de recuperación hay que abrirlo **desde el mismo navegador** donde se pidió.
+5. Recomendación: que todos los administradores activen la verificación en dos pasos desde *Mi cuenta*.
+
+### Notas sobre privacidad y legales (a revisar con el asesor legal de Transgas)
+- `/privacidad` es un **texto modelo**: debe ser revisado y aprobado por un abogado antes de publicarse. En particular: (a) si corresponde la **inscripción de la base de datos** en el Registro Nacional de Bases de Datos de la AAIP y su número; (b) la **transferencia internacional** (la base está en Supabase y el hosting en Hostinger, que pueden estar fuera de Argentina; el texto pide el consentimiento informado); (c) los plazos de conservación; (d) el **correo** para ejercer derechos (CRM → Configuración).
+- Al cambiar la política de forma sustancial, subir `PRIVACY_VERSION` en `src/lib/privacy.ts`: queda registrada con cada consentimiento.
+- Las estadísticas no usan cookies ni guardan IP (hash irreversible que cambia por día), no cuentan bots ni a quienes activan «No rastrear». Por eso no hace falta banner de cookies para el sitio público.
+
+### Sigue fuera de alcance
+IA en el chatbot, WhatsApp Business API, SMS, multi-idioma y auditoría de cambios del CRM.

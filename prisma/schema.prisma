@@ -105,6 +105,7 @@ model DueDate {
   tariffId  String? // null = general
   tariff    Tariff?  @relation(fields: [tariffId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
+  notices   NoticeDelivery[]
 
   @@index([showFrom, dueDate])
   @@map("due_dates")
@@ -250,4 +251,71 @@ model ChatMessage {
 
   @@index([conversationId, createdAt])
   @@map("chat_messages")
+}
+
+// ───────────────────────── Fase 2 ─────────────────────────
+
+/// Configuración editable desde el CRM (teléfonos, banner de aviso, destinatarios de mails, etc.).
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+/// Contenido editado de una página informativa. Si no hay fila, el sitio usa el contenido original del código.
+model Page {
+  slug      String   @id
+  title     String
+  kicker    String?
+  subtitle  String?
+  body      String // HTML sanitizado
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+
+  @@map("pages")
+}
+
+/// Visitas al sitio, sin cookies y sin guardar la IP: solo un hash anónimo que rota cada día.
+model PageView {
+  id           String   @id @default(cuid())
+  path         String
+  referrerHost String?
+  device       String // desktop | mobile | tablet
+  visitorHash  String
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+  @@map("page_views")
+}
+
+/// Suscripción a avisos de vencimiento por mail (con confirmación y baja).
+model Subscriber {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  token           String           @unique @default(cuid())
+  clientNumber    String?
+  confirmedAt     DateTime?
+  unsubscribedAt  DateTime?
+  consentAt       DateTime         @default(now())
+  consentVersion  String
+  createdAt       DateTime         @default(now())
+  deliveries      NoticeDelivery[]
+
+  @@map("subscribers")
+}
+
+/// Registro de qué aviso de vencimiento ya se envió a qué suscriptor (evita duplicados y permite reanudar).
+model NoticeDelivery {
+  id           String     @id @default(cuid())
+  dueDateId    String
+  dueDate      DueDate    @relation(fields: [dueDateId], references: [id], onDelete: Cascade)
+  subscriberId String
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+  sentAt       DateTime   @default(now())
+
+  @@unique([dueDateId, subscriberId])
+  @@map("notice_deliveries")
 }

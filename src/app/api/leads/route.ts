@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
-import { LEAD_FORMS, isLeadType, splitLeadValues, validateLead } from '@/lib/leads/config';
+import { LEAD_FORMS, isLeadType, splitLeadValues, validateLead, type LeadTypeKey } from '@/lib/leads/config';
+import { notifyNewLead } from '@/lib/notifications';
+import { PRIVACY_VERSION } from '@/lib/privacy';
 
 export const runtime = 'nodejs';
 
@@ -41,11 +43,16 @@ export async function POST(req: Request) {
   }
 
   const { core, extraData } = splitLeadValues(result.values);
+  // Constancia del consentimiento (Ley 25.326): qué versión de la política se aceptó y cuándo.
+  extraData.privacidadAceptadaEl = new Date().toISOString();
+  extraData.politicaVersion = PRIVACY_VERSION;
   try {
     const lead = await prisma.lead.create({
       data: { type: config.type, name: core.name, email: core.email, phone: core.phone, message: core.message, extraData },
       select: { id: true },
     });
+    // Aviso por mail al equipo. No frena la respuesta ni la hace fallar si el mail no sale.
+    void notifyNewLead({ id: lead.id, type: config.type as LeadTypeKey, ...core, extraData }).catch((e) => console.error('[api/leads] aviso por mail', e));
     return NextResponse.json({ ok: true, ref: lead.id.slice(-6).toUpperCase() }, { status: 201 });
   } catch (e) {
     console.error('[api/leads] error al guardar', e);

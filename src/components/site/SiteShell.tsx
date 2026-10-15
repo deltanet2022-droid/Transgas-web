@@ -2,6 +2,7 @@ import { ChatWidget } from '@/components/chat/ChatWidget';
 import { Footer } from '@/components/site/Footer';
 import { Header } from '@/components/site/Header';
 import { SiteBanners } from '@/components/site/SiteBanners';
+import { PageViewTracker } from '@/components/site/PageViewTracker';
 import { ScrollReveal } from '@/components/site/ScrollReveal';
 import { TopBar } from '@/components/site/TopBar';
 
@@ -19,6 +20,7 @@ export function SiteShell({ children, banners = true }: { children: React.ReactN
       <Footer />
       <ChatWidget />
       <ScrollReveal />
+      {banners && <PageViewTracker />}
     </>
   );
 }

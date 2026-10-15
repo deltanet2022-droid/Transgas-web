@@ -203,5 +203,5 @@ test('cada mensaje recibe UNA sola respuesta y toda FAQ con respuestas tiene al 
 });
 
 test('las respuestas con marcadores dinámicos usan solo los marcadores soportados', () => {
-  for (const f of records) for (const r of f.respuestas) for (const m of r.matchAll(/\{\{\s*([a-z]+)/gi)) assert.ok(['localidad', 'vencimiento'].includes(m[1]), f.question);
+  for (const f of records) for (const r of f.respuestas) for (const m of r.matchAll(/\{\{\s*([a-z]+)/gi)) assert.ok(['localidad', 'vencimiento', 'emergencia', 'suministro', 'telefono'].includes(m[1]), f.question);
 });

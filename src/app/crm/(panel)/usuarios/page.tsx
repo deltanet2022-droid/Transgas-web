@@ -4,7 +4,7 @@ import { Badge, Field, PageTitle } from '@/components/crm/ui';
 import { prisma } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { formatDateLong } from '@/lib/dates';
-import { changeUserRole, createCrmUser, deleteCrmUser } from './actions';
+import { adminResetMfa, adminSetPassword, changeUserRole, createCrmUser, deleteCrmUser } from './actions';
 
 export const metadata: Metadata = { title: 'Usuarios del CRM' };
 
@@ -55,7 +55,24 @@ export default async function UsersPage({ searchParams }: { searchParams: { erro
                     </form>
                   </td>
                   <td>{formatDateLong(u.createdAt)}</td>
-                  <td style={{ textAlign: 'right' }}>
+                  <td style={{ textAlign: 'right', minWidth: 230 }}>
+                    <details style={{ textAlign: 'left', marginBottom: 8 }}>
+                      <summary className="cbtn s sm" style={{ display: 'inline-flex', cursor: 'pointer' }}>
+                        Acceso y seguridad
+                      </summary>
+                      <div style={{ display: 'grid', gap: 12, padding: 12, marginTop: 8, border: '1px solid var(--line)', borderRadius: 12, background: 'var(--p)' }}>
+                        <ActionForm action={adminSetPassword} submitLabel="Cambiar contraseña" resetOnSuccess>
+                          <input type="hidden" name="id" value={u.id} />
+                          <Field label="Contraseña temporal nueva" help="Mín. 10 caracteres, con letras y números.">
+                            <input name="password" type="password" required minLength={10} autoComplete="new-password" aria-label={`Contraseña nueva para ${u.email}`} />
+                          </Field>
+                        </ActionForm>
+                        <ActionForm action={adminResetMfa} submitLabel="Quitar verificación en dos pasos">
+                          <input type="hidden" name="id" value={u.id} />
+                          <p className="help">Si perdió el celular, se lo quita para que la vuelva a configurar.</p>
+                        </ActionForm>
+                      </div>
+                    </details>
                     {u.id !== me.id && (
                       <form action={deleteCrmUser}>
                         <input type="hidden" name="id" value={u.id} />

@@ -26,9 +26,22 @@ export const getCrmUser = cache(async (): Promise<User | null> => {
   return dbUser;
 });
 
+/** Nivel de verificación de la sesión: aal1 = contraseña; aal2 = contraseña + código de la app autenticadora. */
+export const getAssurance = cache(async () => {
+  const { data } = await createClient().auth.mfa.getAuthenticatorAssuranceLevel();
+  return { current: data?.currentLevel ?? null, next: data?.nextLevel ?? null };
+});
+
+/** Si la persona activó la doble verificación y todavía no ingresó el código en esta sesión. */
+export async function needsSecondFactor(): Promise<boolean> {
+  const a = await getAssurance();
+  return a.next === 'aal2' && a.current !== 'aal2';
+}
+
 export async function requireUser(): Promise<User> {
   const user = await getCrmUser();
   if (!user) redirect('/crm/login?error=noaccess');
+  if (await needsSecondFactor()) redirect('/crm/verificar');
   return user;
 }
 

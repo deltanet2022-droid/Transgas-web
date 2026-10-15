@@ -1,18 +1,23 @@
 import type { Metadata } from 'next';
 import { ActionForm, ConfirmButton } from '@/components/crm/ActionForm';
+import { ActionButton } from '@/components/crm/ActionButton';
 import { Badge, Empty, Field, PageTitle } from '@/components/crm/ui';
 import { prisma } from '@/lib/db';
 import { dateOnlyInput, formatDateOnly, todayAR, addDays } from '@/lib/dates';
 import { createDueDate, deleteDueDate } from './actions';
+import { sendNoticeNow } from './notice-actions';
 
 export const metadata: Metadata = { title: 'Vencimientos' };
 
 export default async function DueDatesPage() {
   const today = todayAR();
-  const [items, tariffs] = await Promise.all([
+  const [items, tariffs, delivered, activeSubs] = await Promise.all([
     prisma.dueDate.findMany({ orderBy: { dueDate: 'desc' }, include: { tariff: { select: { code: true } } } }),
     prisma.tariff.findMany({ where: { active: true }, orderBy: [{ sortOrder: 'asc' }, { code: 'asc' }], select: { id: true, code: true, name: true } }),
+    prisma.noticeDelivery.groupBy({ by: ['dueDateId'], _count: true }),
+    prisma.subscriber.count({ where: { confirmedAt: { not: null }, unsubscribedAt: null } }),
   ]);
+  const sentBy = new Map(delivered.map((d) => [d.dueDateId, d._count]));
   const upcoming = items.filter((i) => i.dueDate >= today).sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
   const past = items.filter((i) => i.dueDate < today);
 
@@ -26,6 +31,19 @@ export default async function DueDatesPage() {
         <td>{formatDateOnly(i.showFrom, 'short')}</td>
         <td>{i.tariff ? `Categoría ${i.tariff.code}` : 'General'}</td>
         <td>{i.message}</td>
+        <td style={{ minWidth: 190 }}>
+          {i.dueDate >= today ? (
+            <ActionButton
+              className="cbtn s sm"
+              action={sendNoticeNow.bind(null, i.id)}
+              label={`Enviar aviso (${sentBy.get(i.id) ?? 0}/${activeSubs})`}
+              pendingLabel="Enviando…"
+              confirm={`¿Enviar el aviso por mail a los suscriptores que todavía no lo recibieron (${Math.max(0, activeSubs - (sentBy.get(i.id) ?? 0))})?`}
+            />
+          ) : (
+            <span style={{ color: 'var(--muted)', fontSize: '.78rem' }}>{sentBy.get(i.id) ?? 0} enviados</span>
+          )}
+        </td>
         <td>{live ? <Badge tone="ok">Visible hoy</Badge> : i.dueDate < today ? <Badge>Vencido</Badge> : <Badge tone="prog">Programado</Badge>}</td>
         <td style={{ textAlign: 'right' }}>
           <form action={deleteDueDate}>
@@ -43,6 +61,7 @@ export default async function DueDatesPage() {
         <th>Mostrar desde</th>
         <th>Alcance</th>
         <th>Mensaje</th>
+        <th>Aviso por mail</th>
         <th>Estado</th>
         <th />
       </tr>

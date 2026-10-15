@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { prisma, safe } from '@/lib/db';
 import { formatDateOnly, todayAR } from '@/lib/dates';
+import { getSettings, isBannerActive } from '@/lib/settings';
 
-/** Franjas superiores: vencimiento vigente hoy (tabla due_dates) y aviso de servicio en curso. */
+/** Franjas superiores: aviso importante (CRM → Configuración), vencimiento vigente hoy y aviso de servicio en curso. */
 export async function SiteBanners() {
   const today = todayAR();
-  const [due, active] = await Promise.all([
+  const [settings, due, active] = await Promise.all([
+    getSettings(),
     safe(
       () =>
         prisma.dueDate.findFirst({
@@ -21,8 +23,25 @@ export async function SiteBanners() {
     ),
   ]);
 
+  const banner = settings.alertBanner;
+  const showAlert = isBannerActive(banner, new Date(today));
+  const external = /^https?:/i.test(banner.linkUrl);
+
   return (
     <>
+      {showAlert && (
+        <div className={`strip alert ${banner.tone === 'info' ? 'alert-info' : 'alert-danger'}`} role="alert">
+          <div className="container">
+            <span className="pillmini">Aviso importante</span>
+            <span>{banner.message}</span>
+            {banner.linkUrl && banner.linkLabel && (
+              <a href={banner.linkUrl} {...(external ? { target: '_blank', rel: 'noopener' } : {})}>
+                {banner.linkLabel}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
       {due && (
         <div className="strip due" role="status">
           <div className="container">

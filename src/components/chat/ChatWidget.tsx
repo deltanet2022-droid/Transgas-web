@@ -309,7 +309,9 @@ export function ChatWidget() {
             →
           </button>
         </form>
-        <div className="chatnote">Asistente virtual automático. No pide contraseñas ni datos bancarios: no los escribas acá.</div>
+        <div className="chatnote">
+          Asistente virtual automático. No pide contraseñas ni datos bancarios: no los escribas acá. La conversación se guarda para mejorar la atención (<Link href="/privacidad">Política de Privacidad</Link>).
+        </div>
       </section>
     </>
   );

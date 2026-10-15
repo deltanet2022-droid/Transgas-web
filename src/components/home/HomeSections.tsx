@@ -368,11 +368,16 @@ export function ContactSection() {
         <div className="newsletter">
           <div>
             <h3>Actualidad Transgas</h3>
-            <p>Novedades, obras y comunicaciones institucionales.</p>
+            <p>Novedades, obras y comunicaciones institucionales. Y recordatorios de vencimiento por mail.</p>
           </div>
-          <Link className="btn white" href="/blog">
-            Ver novedades →
-          </Link>
+          <span style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link className="btn white" href="/blog">
+              Ver novedades →
+            </Link>
+            <Link className="btn outline" href="/avisos">
+              Avisos de vencimiento
+            </Link>
+          </span>
         </div>
       </div>
     </section>

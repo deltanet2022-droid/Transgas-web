@@ -5,14 +5,15 @@ import { prisma } from '@/lib/db';
 
 export const metadata: Metadata = { title: 'Nueva pregunta frecuente' };
 
-export default async function NewFaqPage() {
+export default async function NewFaqPage({ searchParams }: { searchParams: { q?: string } }) {
+  const prefill = (searchParams.q ?? '').trim().slice(0, 120);
   const categories = (await prisma.faq.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } })).map((c) => c.category);
   return (
     <>
       <BackLink href="/crm/faq">Preguntas frecuentes</BackLink>
       <PageTitle title="Nueva pregunta frecuente" />
       <div className="crm-card" style={{ maxWidth: 900 }}>
-        <FaqForm categories={categories} />
+        <FaqForm categories={categories} prefill={prefill} />
       </div>
     </>
   );

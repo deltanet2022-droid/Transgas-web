@@ -2,6 +2,8 @@ import 'server-only';
 import { prisma } from '@/lib/db';
 import { formatDateOnly, todayAR } from '@/lib/dates';
 import { site } from '@/lib/site';
+import { fillTokens } from '@/lib/tokens';
+import { getSettings } from '@/lib/settings';
 import { normalize } from './normalize';
 
 /**
@@ -11,6 +13,7 @@ import { normalize } from './normalize';
  *   {{localidad:Jovita}}  → datos de la cooperativa de esa localidad + gasistas matriculados de la zona
  *   {{vencimiento}}       → próximo vencimiento cargado en el CRM
  */
+const DYNAMIC = new Set(['localidad', 'vencimiento']);
 const TOKEN_RE = /\{\{\s*([a-z]+)\s*(?::\s*([^}]+?))?\s*\}\}/gi;
 
 export async function expandDynamic(text: string): Promise<string> {
@@ -18,6 +21,7 @@ export async function expandDynamic(text: string): Promise<string> {
   const matches = [...text.matchAll(TOKEN_RE)];
   let out = text;
   for (const m of matches) {
+    if (!DYNAMIC.has(m[1].toLowerCase())) continue; // {{emergencia}}, {{telefono}}… los resuelve fillTokens
     let replacement = '';
     try {
       replacement = await resolveToken(m[1].toLowerCase(), (m[2] ?? '').trim());
@@ -26,7 +30,7 @@ export async function expandDynamic(text: string): Promise<string> {
     }
     out = out.replace(m[0], replacement);
   }
-  return out.replace(/\n{3,}/g, '\n\n').trim();
+  return (await fillTokens(out)).replace(/\n{3,}/g, '\n\n').trim();
 }
 
 async function resolveToken(name: string, arg: string): Promise<string> {
@@ -60,7 +64,7 @@ async function locality(name: string): Promise<string> {
     });
     blocks.push(`🔧 Gasistas matriculados en ${name}:\n${rows.join('\n')}`);
   }
-  if (!blocks.length) return `Todavía no tengo datos cargados para ${name}. Podés consultar en ${site.phone} (${site.schedule.toLowerCase()}).`;
+  if (!blocks.length) return `Todavía no tengo datos cargados para ${name}. Podés consultar en ${(await getSettings()).attentionPhone} (${site.schedule.toLowerCase()}).`;
   return blocks.join('\n\n');
 }
 

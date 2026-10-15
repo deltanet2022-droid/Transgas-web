@@ -196,6 +196,16 @@ export const LEAD_FORMS: Record<LeadTypeKey, LeadFormConfig> = {
   },
 };
 
+/** Consentimiento informado (Ley 25.326): obligatorio en todos los formularios. "[[texto|/ruta]]" se muestra como enlace. */
+const privacyConsent: LeadField = {
+  name: 'privacidad',
+  label: 'Leí y acepto la [[Política de Privacidad|/privacidad]] y presto mi consentimiento para el tratamiento de mis datos personales.',
+  type: 'checkbox',
+  required: true,
+  full: true,
+};
+for (const cfg of Object.values(LEAD_FORMS)) cfg.fields.push(privacyConsent);
+
 export function isLeadType(value: unknown): value is LeadTypeKey {
   return typeof value === 'string' && (LEAD_TYPES as readonly string[]).includes(value);
 }
@@ -262,5 +272,11 @@ export function splitLeadValues(values: LeadValues) {
 
 /** Etiquetas legibles para mostrar extraData en el CRM. */
 export function extraFieldLabel(type: LeadTypeKey, key: string): string {
-  return LEAD_FORMS[type]?.fields.find((f) => f.name === key)?.label ?? key;
+  const fixed: Record<string, string> = {
+    privacidad: 'Aceptó la política de privacidad',
+    privacidadAceptadaEl: 'Fecha y hora de aceptación (UTC)',
+    politicaVersion: 'Versión de la política aceptada',
+  };
+  if (fixed[key]) return fixed[key];
+  return (LEAD_FORMS[type]?.fields.find((f) => f.name === key)?.label ?? key).replace(/\[\[(.+?)\|.+?\]\]/g, '$1');
 }

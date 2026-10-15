@@ -5,13 +5,14 @@ import { z } from 'zod';
 import { prisma } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { passwordSchema } from '@/lib/crm/password';
 import { fail, firstZodError, formString, refreshCrm, success, type ActionState } from '@/lib/crm/action';
 
 const createSchema = z.object({
   email: z.string().email('Ingresá un email válido.').max(160).transform((v) => v.toLowerCase()),
   name: z.string().max(120),
   role: z.enum(['ADMIN', 'EDITOR'], { errorMap: () => ({ message: 'Elegí un rol.' }) }),
-  password: z.string().min(10, 'La contraseña temporal debe tener al menos 10 caracteres.').max(72),
+  password: passwordSchema,
 });
 
 /** Alta: crea el usuario en Supabase Auth y su registro (con rol) en la tabla users. Solo admin. */
@@ -86,4 +87,41 @@ export async function deleteCrmUser(fd: FormData) {
   }
   refreshCrm();
   redirect('/crm/usuarios');
+}
+
+/** El administrador define una contraseña temporal nueva para otro usuario (por ejemplo, si la olvidó). */
+export async function adminSetPassword(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const id = formString(fd, 'id');
+  const password = typeof fd.get('password') === 'string' ? (fd.get('password') as string) : '';
+  const parsed = passwordSchema.safeParse(password);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? 'Contraseña inválida.');
+  const target = await prisma.user.findUnique({ where: { id } });
+  if (!target?.supabaseId) return fail('Ese usuario todavía no ingresó nunca, no tiene cuenta de acceso creada.');
+  try {
+    const { error } = await createAdminClient().auth.admin.updateUserById(target.supabaseId, { password });
+    if (error) return fail(`No se pudo cambiar la contraseña: ${error.message}`);
+  } catch {
+    return fail('Falta configurar SUPABASE_SERVICE_ROLE_KEY en el servidor.');
+  }
+  return success(`Contraseña de ${target.email} actualizada. Compartísela por un canal seguro.`);
+}
+
+/** Si alguien perdió el celular: se quita su verificación en dos pasos para que pueda volver a configurarla. */
+export async function adminResetMfa(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const target = await prisma.user.findUnique({ where: { id: formString(fd, 'id') } });
+  if (!target?.supabaseId) return fail('Ese usuario no tiene cuenta de acceso.');
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin.auth.admin.mfa.listFactors({ userId: target.supabaseId });
+    if (error) return fail(`No se pudo consultar: ${error.message}`);
+    for (const f of data?.factors ?? []) {
+      const r = await admin.auth.admin.mfa.deleteFactor({ id: f.id, userId: target.supabaseId });
+      if (r.error) return fail(`No se pudo quitar: ${r.error.message}`);
+    }
+  } catch {
+    return fail('Falta configurar SUPABASE_SERVICE_ROLE_KEY en el servidor.');
+  }
+  return success(`Se quitó la verificación en dos pasos de ${target.email}.`);
 }

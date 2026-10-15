@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { ConfirmButton } from '@/components/crm/ActionForm';
 import { BackLink, ConversationBadges, PageTitle } from '@/components/crm/ui';
+import { getCrmUser } from '@/lib/auth';
+import { deleteConversation } from '../actions';
 import { prisma } from '@/lib/db';
 import { formatDateTime } from '@/lib/dates';
 
@@ -16,7 +19,7 @@ const KIND_LABEL: Record<string, string> = {
 };
 
 export default async function ChatDetailPage({ params }: { params: { id: string } }) {
-  const conv = await prisma.chatConversation.findUnique({ where: { id: params.id }, include: { messages: { orderBy: { createdAt: 'asc' } } } });
+  const [conv, me] = await Promise.all([prisma.chatConversation.findUnique({ where: { id: params.id }, include: { messages: { orderBy: { createdAt: 'asc' } } } }), getCrmUser()]);
   if (!conv) notFound();
 
   const faqIds = [...new Set(conv.messages.map((m) => (m.meta as { faqId?: string } | null)?.faqId).filter((x): x is string => !!x))];
@@ -25,7 +28,18 @@ export default async function ChatDetailPage({ params }: { params: { id: string 
   return (
     <>
       <BackLink href="/crm/chatbot">Historial del chatbot</BackLink>
-      <PageTitle title="Conversación" sub={`Iniciada el ${formatDateTime(conv.startedAt)} · última actividad ${formatDateTime(conv.lastActivityAt)}`} action={<ConversationBadges c={conv} />} />
+      <PageTitle title="Conversación" sub={`Iniciada el ${formatDateTime(conv.startedAt)} · última actividad ${formatDateTime(conv.lastActivityAt)}`} action={
+          <span style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+            <ConversationBadges c={conv} />
+            {me?.role === 'ADMIN' && (
+              <form action={deleteConversation}>
+                <input type="hidden" name="id" value={conv.id} />
+                <ConfirmButton message="¿Eliminar esta conversación y sus mensajes? No se puede deshacer.">Eliminar</ConfirmButton>
+              </form>
+            )}
+          </span>
+        }
+      />
       <section className="crm-card" style={{ maxWidth: 820 }}>
         <div className="chatlog">
           {conv.messages.map((m) => {

@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { PRIVACY_NOTICE, PRIVACY_PATH } from '@/lib/privacy';
+import { RichLabel } from './RichLabel';
 import { validateLead, type LeadErrors, type LeadField, type LeadFormConfig, type LeadValues } from '@/lib/leads/config';
 
 type Status = 'idle' | 'sending' | 'success';
@@ -115,6 +117,14 @@ export function LeadForm({ config }: { config: LeadFormConfig }) {
         </label>
       </div>
 
+      <p className="privnote">
+        {PRIVACY_NOTICE}{' '}
+        <a href={PRIVACY_PATH} target="_blank" rel="noopener noreferrer">
+          Leer la Política de Privacidad
+        </a>
+        .
+      </p>
+
       <div className="formfoot">
         <button className="btn primary" type="submit" disabled={status === 'sending' || !hydrated}>
           {status === 'sending' ? 'Enviando…' : 'Enviar solicitud'}
@@ -146,7 +156,7 @@ function Field({
         <label className="check" htmlFor={id}>
           <input {...common} type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} />
           <span>
-            {f.label} {f.required && <i>*</i>}
+            <RichLabel text={f.label} /> {f.required && <i>*</i>}
           </span>
         </label>
         {error && (

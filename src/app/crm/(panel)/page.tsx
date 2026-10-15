@@ -8,7 +8,8 @@ export default async function CrmDashboard({ searchParams }: { searchParams: { f
   const today = todayAR();
   const now = new Date();
 
-  const [newLeads, nextDue, activeAlert, nextScheduled, news, conversations, latestLeads] = await Promise.all([
+  const week = new Date(Date.now() - 7 * 86_400_000);
+  const [newLeads, nextDue, activeAlert, nextScheduled, news, conversations, latestLeads, weekViews] = await Promise.all([
     prisma.lead.count({ where: { status: 'NUEVO' } }),
     prisma.dueDate.findFirst({ where: { dueDate: { gte: today } }, orderBy: { dueDate: 'asc' }, include: { tariff: { select: { code: true } } } }),
     prisma.serviceStatus.findFirst({ where: { status: 'EN_CURSO' }, orderBy: { startsAt: 'desc' } }),
@@ -20,6 +21,7 @@ export default async function CrmDashboard({ searchParams }: { searchParams: { f
       include: { messages: { where: { role: 'USER' }, orderBy: { createdAt: 'asc' }, take: 1, select: { text: true } }, _count: { select: { messages: true } } },
     }),
     prisma.lead.findMany({ where: { status: 'NUEVO' }, orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, type: true, name: true, createdAt: true } }),
+    prisma.pageView.count({ where: { createdAt: { gte: week } } }),
   ]);
   const service = activeAlert ?? nextScheduled;
 
@@ -28,7 +30,7 @@ export default async function CrmDashboard({ searchParams }: { searchParams: { f
       <PageTitle title="Inicio" sub="Resumen de lo que necesita tu atención." />
       {searchParams.forbidden && <div className="cmsg err" style={{ marginBottom: 16 }}>No tenés permiso para acceder a esa sección.</div>}
 
-      <div className="crm-grid c3" style={{ marginBottom: 16 }}>
+      <div className="crm-grid c4" style={{ marginBottom: 16 }}>
         <Link href="/crm/contactos?status=NUEVO" className="crm-card stat" style={{ textDecoration: 'none' }}>
           <small>Contactos nuevos sin atender</small>
           <strong style={{ color: newLeads ? 'var(--b)' : undefined }}>{newLeads}</strong>
@@ -66,6 +68,11 @@ export default async function CrmDashboard({ searchParams }: { searchParams: { f
               <span>Sin cortes ni avisos vigentes.</span>
             </>
           )}
+        </Link>
+        <Link href="/crm/estadisticas" className="crm-card stat" style={{ textDecoration: 'none' }}>
+          <small>Visitas al sitio (7 días)</small>
+          <strong>{weekViews}</strong>
+          <span>páginas vistas · ver estadísticas</span>
         </Link>
       </div>
 

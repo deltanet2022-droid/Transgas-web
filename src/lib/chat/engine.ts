@@ -1,6 +1,5 @@
 import 'server-only';
 import { prisma } from '@/lib/db';
-import { site } from '@/lib/site';
 import type { ChatEngine, FaqRecord } from './types';
 import { RuleBasedEngine } from './ruleBasedEngine';
 
@@ -35,7 +34,8 @@ export function getChatEngine(): ChatEngine {
     case 'rules':
       instance = new RuleBasedEngine({
         getFaqs: loadFaqs,
-        emergencyPhone: process.env.EMERGENCY_PHONE_DISPLAY || site.emergencyPhone,
+        // Marcador: se reemplaza por el teléfono vigente (CRM → Configuración) al responder.
+        emergencyPhone: '{{emergencia}}',
       });
       return instance;
     default:

@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { site, images } from '@/lib/site';
+import { getSettings, telDigits } from '@/lib/settings';
 import { BuildingIcon, ChartIcon, ReceiptIcon, ShieldIcon } from '@/components/ui/Icons';
 
-export function Hero({ serviceAlert }: { serviceAlert: boolean }) {
+export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
+  const s = await getSettings();
   return (
     <section className="hero" id="inicio">
       <div className="hero-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images.hero} alt="Infraestructura gasífera" />
+        <img src={images.hero} alt="Infraestructura gasífera" fetchPriority="high" decoding="async" />
       </div>
       <div className="container hero-grid">
         <div>
@@ -88,7 +90,7 @@ export function Hero({ serviceAlert }: { serviceAlert: boolean }) {
           </div>
           <div className="panelfoot">
             <small>{site.addressShort}</small>
-            <a className="panic" href={`tel:${site.emergencyPhoneTel}`}>
+            <a className="panic" href={`tel:${telDigits(s.emergencyPhone)}`}>
               Emergencias 24/7
             </a>
           </div>
@@ -98,7 +100,8 @@ export function Hero({ serviceAlert }: { serviceAlert: boolean }) {
   );
 }
 
-export function QuickBar() {
+export async function QuickBar() {
+  const s = await getSettings();
   return (
     <div className="container quick">
       <div className="quickgrid">
@@ -123,18 +126,18 @@ export function QuickBar() {
             <small>Guía de usuario</small>
           </span>
         </Link>
-        <a href={`tel:${site.supplyPhoneTel}`}>
+        <a href={`tel:${telDigits(s.supplyPhone)}`}>
           <span className="qico">↯</span>
           <span>
             <strong>Falta suministro</strong>
-            <small>{site.supplyPhone}</small>
+            <small>{s.supplyPhone}</small>
           </span>
         </a>
-        <a href={`tel:${site.emergencyPhoneTel}`}>
+        <a href={`tel:${telDigits(s.emergencyPhone)}`}>
           <span className="qico">!</span>
           <span>
             <strong>Emergencias</strong>
-            <small>{site.emergencyPhone}</small>
+            <small>{s.emergencyPhone}</small>
           </span>
         </a>
       </div>

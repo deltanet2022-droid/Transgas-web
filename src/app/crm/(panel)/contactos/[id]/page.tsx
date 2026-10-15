@@ -1,17 +1,18 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ActionForm } from '@/components/crm/ActionForm';
+import { ActionForm, ConfirmButton } from '@/components/crm/ActionForm';
+import { getCrmUser } from '@/lib/auth';
 import { BackLink, Badge, Field, PageTitle } from '@/components/crm/ui';
 import { prisma } from '@/lib/db';
 import { formatDateTime } from '@/lib/dates';
 import { LEAD_TYPE_LABEL, extraFieldLabel, type LeadTypeKey } from '@/lib/leads/config';
 import { LEAD_STATUSES, LEAD_STATUS_LABEL } from '@/lib/crm/leads';
-import { updateLead } from '../actions';
+import { deleteLead, updateLead } from '../actions';
 
 export const metadata: Metadata = { title: 'Detalle de contacto' };
 
 export default async function LeadDetailPage({ params }: { params: { id: string } }) {
-  const lead = await prisma.lead.findUnique({ where: { id: params.id } });
+  const [lead, me] = await Promise.all([prisma.lead.findUnique({ where: { id: params.id } }), getCrmUser()]);
   if (!lead) notFound();
   const type = lead.type as LeadTypeKey;
   const extra = Object.entries((lead.extraData ?? {}) as Record<string, unknown>);
@@ -61,6 +62,12 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
               <textarea id="internalNotes" name="internalNotes" rows={6} maxLength={4000} defaultValue={lead.internalNotes ?? ''} />
             </Field>
           </ActionForm>
+          {me?.role === 'ADMIN' && (
+            <form action={deleteLead} style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
+              <input type="hidden" name="id" value={lead.id} />
+              <ConfirmButton message="¿Eliminar este contacto de forma definitiva? Es el «derecho de supresión» (Ley 25.326) y no se puede deshacer.">Eliminar contacto (derecho de supresión)</ConfirmButton>
+            </form>
+          )}
         </section>
       </div>
     </>

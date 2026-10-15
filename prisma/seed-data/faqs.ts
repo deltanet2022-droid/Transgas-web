@@ -113,8 +113,8 @@ export const faqs: SeedFaq[] = [
     category: 'Conversación',
     palabrasClave: ['chau', 'adios', 'hasta luego', 'hasta pronto', 'nos vemos', 'eso es todo', 'nada mas', 'no gracias'],
     respuestas: [
-      '¡Hasta luego! 👋 Gracias por comunicarte con Transgas. Ante una emergencia, recordá que podés llamar al 0800-777-8427 las 24 horas.',
-      '¡Chau, que tengas un lindo día! 👋 Si necesitás algo más, acá estoy. Y ante una emergencia: 0800-777-8427, las 24 horas.',
+      '¡Hasta luego! 👋 Gracias por comunicarte con Transgas. Ante una emergencia, recordá que podés llamar al {{emergencia}} las 24 horas.',
+      '¡Chau, que tengas un lindo día! 👋 Si necesitás algo más, acá estoy. Y ante una emergencia: {{emergencia}}, las 24 horas.',
     ],
   },
   {
@@ -144,7 +144,7 @@ export const faqs: SeedFaq[] = [
     respuestas: [
       `Podés ver, descargar y pagar tu factura desde CoopOnline: ${COOP}\nIngresá con tu usuario y contraseña. Importante: no compartas tus claves con nadie, ni por este chat.\n\n¿Qué más necesitás saber sobre tu factura?`,
       `Tu factura está disponible en CoopOnline (${COOP}). Ahí consultás el consumo, descargás el comprobante y gestionás el pago.\n\n¿Querés saber algo más sobre tu factura?`,
-      `Entrá a CoopOnline (${COOP}) para ver y pagar tu factura. Si todavía no tenés usuario, consultanos en atención al cliente: 3385-480021.\n\n¿Te ayudo con algo más de tu factura?`,
+      `Entrá a CoopOnline (${COOP}) para ver y pagar tu factura. Si todavía no tenés usuario, consultanos en atención al cliente: {{telefono}}.\n\n¿Te ayudo con algo más de tu factura?`,
     ],
     followUps: ['Cómo leer mi factura', 'Mi factura vino más alta', '¿Cuándo vence mi factura?', 'Pagué y no figura', 'No me llegó la factura', 'Factura electrónica'],
   },
@@ -189,8 +189,8 @@ export const faqs: SeedFaq[] = [
     category: 'Facturación',
     palabrasClave: ['olvide contrasena', 'no puedo ingresar', 'no puedo entrar', 'clave cooponline', 'usuario cooponline', 'recuperar clave', 'no me deja entrar'],
     respuestas: [
-      `Para recuperar el acceso usá las opciones de CoopOnline (${COOP}). Si no te funciona, comunicate con atención al cliente al 3385-480021 (lunes a viernes de 07:00 a 14:00). Recordá: nunca compartas tu contraseña por este chat.`,
-      `Probá recuperar tu clave desde la pantalla de ingreso de CoopOnline (${COOP}). Si el problema sigue, llamá al 3385-480021 en horario de atención. Por seguridad, no me envíes tus claves por acá.`,
+      `Para recuperar el acceso usá las opciones de CoopOnline (${COOP}). Si no te funciona, comunicate con atención al cliente al {{telefono}} (lunes a viernes de 07:00 a 14:00). Recordá: nunca compartas tu contraseña por este chat.`,
+      `Probá recuperar tu clave desde la pantalla de ingreso de CoopOnline (${COOP}). Si el problema sigue, llamá al {{telefono}} en horario de atención. Por seguridad, no me envíes tus claves por acá.`,
     ],
     followUps: ['Hablar con una persona', 'Contacto y horarios'],
   },
@@ -258,8 +258,8 @@ export const faqs: SeedFaq[] = [
     category: 'Trámites',
     palabrasClave: ['cuanto tarda alta', 'cuanto tarda nuevo servicio', 'cuanto tarda conexion', 'plazo alta', 'cuando me conectan', 'cuanto demora la conexion'],
     respuestas: [
-      'Los tiempos dependen de cada caso: si hay red en tu calle, de la documentación y de la instalación interna a cargo de un gasista matriculado. Una vez que envíes la solicitud en /autogestion/nuevo-servicio, el equipo te informa los plazos estimados. También podés consultar al 3385-480021.',
-      'No hay un plazo único: varía según la factibilidad de red y los trámites de cada usuario. Si ya enviaste la solicitud, te van a contactar con una estimación; si no, empezá en /autogestion/nuevo-servicio o llamá al 3385-480021.',
+      'Los tiempos dependen de cada caso: si hay red en tu calle, de la documentación y de la instalación interna a cargo de un gasista matriculado. Una vez que envíes la solicitud en /autogestion/nuevo-servicio, el equipo te informa los plazos estimados. También podés consultar al {{telefono}}.',
+      'No hay un plazo único: varía según la factibilidad de red y los trámites de cada usuario. Si ya enviaste la solicitud, te van a contactar con una estimación; si no, empezá en /autogestion/nuevo-servicio o llamá al {{telefono}}.',
     ],
     followUps: ['¿Cuánto cuesta conectarme?', 'Gasistas matriculados'],
   },
@@ -268,7 +268,7 @@ export const faqs: SeedFaq[] = [
     category: 'Trámites',
     palabrasClave: ['cuanto cuesta conexion', 'costo conexion', 'costo alta', 'precio conectar gas', 'cuanto sale conectar', 'cuanto sale el alta'],
     respuestas: [
-      'El costo depende de cada caso (distancia a la red, obra necesaria y trámites). Solicitá el servicio en /autogestion/nuevo-servicio y te informamos los importes aplicables. También podés consultar por teléfono: 3385-480021.',
+      'El costo depende de cada caso (distancia a la red, obra necesaria y trámites). Solicitá el servicio en /autogestion/nuevo-servicio y te informamos los importes aplicables. También podés consultar por teléfono: {{telefono}}.',
       'No hay un valor único: se calcula según la situación de cada domicilio. Iniciá la consulta en /autogestion/nuevo-servicio y el equipo te pasa el detalle.',
     ],
     followUps: ['¿Cuánto tarda el alta?', 'Gasistas matriculados'],
@@ -319,8 +319,8 @@ export const faqs: SeedFaq[] = [
     category: 'Servicio',
     palabrasClave: ['sin gas', 'falta de gas', 'no tengo gas', 'sin suministro', 'corte de gas', 'se corto el gas', 'no hay gas', 'falta suministro'],
     respuestas: [
-      'Para reportar falta de suministro comunicate al 3385-480200. Antes, revisá si hay un aviso en /estado-del-servicio: puede ser un corte programado o una tarea en tu zona.',
-      'Si te quedaste sin gas llamá al 3385-480200 (falta de suministro). Podés ver si hay cortes o trabajos en tu zona en /estado-del-servicio.',
+      'Para reportar falta de suministro comunicate al {{suministro}}. Antes, revisá si hay un aviso en /estado-del-servicio: puede ser un corte programado o una tarea en tu zona.',
+      'Si te quedaste sin gas llamá al {{suministro}} (falta de suministro). Podés ver si hay cortes o trabajos en tu zona en /estado-del-servicio.',
     ],
     followUps: ['¿Hay cortes programados?', '¿Cuánto dura un corte?', 'Llega poca presión de gas', 'Tengo olor a gas'],
   },
@@ -339,7 +339,7 @@ export const faqs: SeedFaq[] = [
     category: 'Servicio',
     palabrasClave: ['cuanto dura un corte', 'cuanto dura el corte', 'hasta cuando no hay gas', 'cuando se arregla', 'cuando se normaliza'],
     respuestas: [
-      'Los avisos de /estado-del-servicio indican el inicio y el fin estimado de cada corte o trabajo. Si no hay un aviso para tu zona, reportá la falta de suministro al 3385-480200.',
+      'Los avisos de /estado-del-servicio indican el inicio y el fin estimado de cada corte o trabajo. Si no hay un aviso para tu zona, reportá la falta de suministro al {{suministro}}.',
     ],
     followUps: ['¿Hay cortes programados?', 'Me quedé sin gas'],
   },
@@ -348,7 +348,7 @@ export const faqs: SeedFaq[] = [
     category: 'Servicio',
     palabrasClave: ['poca presion', 'llega poco gas', 'la llama es baja', 'poco gas', 'presion baja', 'baja presion', 'llama debil'],
     respuestas: [
-      'Si el gas llega con poca presión o la llama sale débil, reportalo al 3385-480200 (falta de suministro) para que lo revisen. Si además sentís olor a gas, es una emergencia: salí del lugar y llamá al 0800-777-8427.',
+      'Si el gas llega con poca presión o la llama sale débil, reportalo al {{suministro}} (falta de suministro) para que lo revisen. Si además sentís olor a gas, es una emergencia: salí del lugar y llamá al {{emergencia}}.',
     ],
     followUps: ['Me quedé sin gas', 'Gasistas matriculados'],
   },
@@ -357,7 +357,7 @@ export const faqs: SeedFaq[] = [
     category: 'Servicio',
     palabrasClave: ['volvio el gas', 'vuelve el gas que hago', 'despues de un corte de gas', 'volvio el servicio', 'reencender artefactos'],
     respuestas: [
-      'Cuando vuelve el servicio después de un corte: ventilá los ambientes y verificá que no haya olor a gas antes de reencender los artefactos. Encendelos de a uno y con cuidado. Si notás olor a gas o algo raro, no uses fuego ni interruptores, salí del lugar y llamá al 0800-777-8427.',
+      'Cuando vuelve el servicio después de un corte: ventilá los ambientes y verificá que no haya olor a gas antes de reencender los artefactos. Encendelos de a uno y con cuidado. Si notás olor a gas o algo raro, no uses fuego ni interruptores, salí del lugar y llamá al {{emergencia}}.',
     ],
     followUps: ['Seguridad', 'Me quedé sin gas'],
   },
@@ -378,8 +378,8 @@ export const faqs: SeedFaq[] = [
     category: 'Emergencias',
     palabrasClave: ['emergencia', 'emergencias', 'urgencia', 'numero de emergencia', 'telefono de emergencia', 'guardia'],
     respuestas: [
-      'Si hay riesgo, alejate del lugar y llamá desde un sitio seguro. Ese es el canal oficial de emergencias de Transgas. Si es por falta de suministro (sin riesgo), el número es 3385-480200.',
-      'No esperes: si sentís olor a gas o hay peligro, salí del lugar y llamá desde afuera. Para falta de suministro sin riesgo, comunicate al 3385-480200.',
+      'Si hay riesgo, alejate del lugar y llamá desde un sitio seguro. Ese es el canal oficial de emergencias de Transgas. Si es por falta de suministro (sin riesgo), el número es {{suministro}}.',
+      'No esperes: si sentís olor a gas o hay peligro, salí del lugar y llamá desde afuera. Para falta de suministro sin riesgo, comunicate al {{suministro}}.',
     ],
   },
   {
@@ -445,7 +445,7 @@ export const faqs: SeedFaq[] = [
     palabrasClave: ['prevencion de danos', 'dano a la red', 'excavar', 'obra en la via publica', 'caneria enterrada', 'excavadora', 'antes de excavar', 'rotura de caneria'],
     respuestas: [
       'Antes de excavar o hacer obras, consultá por la ubicación de las redes de gas para evitar daños y accidentes. Todo el plan de prevención está en /seguridad/prevencion-de-danos.',
-      'Si vas a hacer una excavación, avisá antes: dañar una cañería de gas es muy peligroso. Mirá las recomendaciones en /seguridad/prevencion-de-danos. Si ya hubo un daño, llamá al 0800-777-8427.',
+      'Si vas a hacer una excavación, avisá antes: dañar una cañería de gas es muy peligroso. Mirá las recomendaciones en /seguridad/prevencion-de-danos. Si ya hubo un daño, llamá al {{emergencia}}.',
     ],
     followUps: ['Contacto y horarios', 'Seguridad'],
   },
@@ -507,7 +507,7 @@ export const faqs: SeedFaq[] = [
     category: 'Información',
     palabrasClave: ['derechos', 'derechos de usuarios', 'reclamo', 'reclamos', 'quiero reclamar', 'defensa del consumidor', 'queja'],
     respuestas: [
-      'Los derechos de los usuarios del servicio están publicados en /usuarios/derechos. Para presentar un reclamo escribinos desde /contacto o llamá al 3385-480021.',
+      'Los derechos de los usuarios del servicio están publicados en /usuarios/derechos. Para presentar un reclamo escribinos desde /contacto o llamá al {{telefono}}.',
       'Podés consultar tus derechos como usuario en /usuarios/derechos. Si querés hacer un reclamo, usá el formulario de /contacto.',
     ],
     followUps: ['Hablar con una persona', 'Contacto y horarios'],
@@ -527,8 +527,8 @@ export const faqs: SeedFaq[] = [
     category: 'Contacto',
     palabrasClave: ['contacto', 'contacto y horarios', 'telefono', 'telefono de atencion', 'horario', 'horario de atencion', 'mail', 'correo', 'sabado', 'domingo', 'fin de semana', 'atienden hoy'],
     respuestas: [
-      'Atención al cliente: 3385-480021, de lunes a viernes de 07:00 a 14:00 hs. Para emergencias, 0800-777-8427 las 24 horas, y para falta de suministro 3385-480200. También podés escribir desde /contacto.',
-      'Podés comunicarte al 3385-480021 (lunes a viernes, 07:00 a 14:00) o escribirnos desde /contacto. Emergencias: 0800-777-8427, las 24 horas.',
+      'Atención al cliente: {{telefono}}, de lunes a viernes de 07:00 a 14:00 hs. Para emergencias, {{emergencia}} las 24 horas, y para falta de suministro {{suministro}}. También podés escribir desde /contacto.',
+      'Podés comunicarte al {{telefono}} (lunes a viernes, 07:00 a 14:00) o escribirnos desde /contacto. Emergencias: {{emergencia}}, las 24 horas.',
     ],
     followUps: ['Cómo llegar', 'Hablar con una persona', 'Cooperativas y gasistas'],
   },

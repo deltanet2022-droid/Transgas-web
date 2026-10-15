@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { site } from '@/lib/site';
+import { getSettings, telDigits } from '@/lib/settings';
 
-export function Footer() {
+export async function Footer() {
+  const s = await getSettings();
   return (
     <footer className="site-footer">
       <div className="container footgrid">
@@ -21,6 +23,7 @@ export function Footer() {
           <Link href="/tarifas">Tarifas</Link>
           <Link href="/ayuda/entender-tu-factura">Entender tu factura</Link>
           <Link href="/usuarios/derechos">Derechos de usuarios</Link>
+          <Link href="/avisos">Avisos de vencimiento</Link>
         </div>
         <div className="foot">
           <h4>Infraestructura</h4>
@@ -38,8 +41,8 @@ export function Footer() {
         </div>
         <div className="foot">
           <h4>Emergencias</h4>
-          <a href={`tel:${site.emergencyPhoneTel}`}>{site.emergencyPhone}</a>
-          <a href={`tel:${site.supplyPhoneTel}`}>{site.supplyPhone} (falta de suministro)</a>
+          <a href={`tel:${telDigits(s.emergencyPhone)}`}>{s.emergencyPhone}</a>
+          <a href={`tel:${telDigits(s.supplyPhone)}`}>{s.supplyPhone} (falta de suministro)</a>
           <Link href="/seguridad">Seguridad</Link>
           <Link href="/estado-del-servicio">Estado del servicio</Link>
           <Link href="/contacto">Contacto</Link>
@@ -48,7 +51,7 @@ export function Footer() {
       <div className="container footbottom">
         <span>© {new Date().getFullYear()} Transgas Ltda.</span>
         <span>
-          {site.address} · <a href={`tel:${site.phoneTel}`}>{site.phone}</a>
+          <Link href="/privacidad">Política de Privacidad</Link> · {site.address} · <a href={`tel:${telDigits(s.attentionPhone)}`}>{s.attentionPhone}</a>
         </span>
       </div>
     </footer>

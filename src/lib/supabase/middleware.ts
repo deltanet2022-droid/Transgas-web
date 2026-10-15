@@ -22,8 +22,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLogin = request.nextUrl.pathname === '/crm/login';
-  if (!user && !isLogin) {
+  // Rutas del CRM que se pueden abrir sin sesión (ingreso, recuperación de contraseña y vuelta del mail).
+  const isPublic = ['/crm/login', '/crm/recuperar', '/crm/auth/callback'].includes(request.nextUrl.pathname);
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/crm/login';
     url.search = '';
