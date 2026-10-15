@@ -15,7 +15,7 @@ export async function Footer() {
           <p>{site.legalName} Servicio, infraestructura, información y comunidad.</p>
         </div>
         <div className="foot">
-          <h4>Usuarios</h4>
+          <h2>Usuarios</h2>
           <Link href="/autogestion">Autogestión</Link>
           <a href={site.coopOnlineUrl} target="_blank" rel="noopener">
             Mi cuenta
@@ -24,9 +24,10 @@ export async function Footer() {
           <Link href="/ayuda/entender-tu-factura">Entender tu factura</Link>
           <Link href="/usuarios/derechos">Derechos de usuarios</Link>
           <Link href="/avisos">Avisos de vencimiento</Link>
+          <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>
         </div>
         <div className="foot">
-          <h4>Infraestructura</h4>
+          <h2>Infraestructura</h2>
           <Link href="/#infraestructura">Obras y redes</Link>
           <Link href="/profesionales/gasistas-matriculados">Gasistas</Link>
           <Link href="/cooperativas">Cooperativas</Link>
@@ -40,7 +41,7 @@ export async function Footer() {
           </a>
         </div>
         <div className="foot">
-          <h4>Emergencias</h4>
+          <h2>Emergencias</h2>
           <a href={`tel:${telDigits(s.emergencyPhone)}`}>{s.emergencyPhone}</a>
           <a href={`tel:${telDigits(s.supplyPhone)}`}>{s.supplyPhone} (falta de suministro)</a>
           <Link href="/seguridad">Seguridad</Link>

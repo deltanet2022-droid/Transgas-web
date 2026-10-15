@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { PageBody, PageHeader, SosBar } from '@/components/site/PageParts';
 
-export const metadata: Metadata = {
-  title: 'Seguridad',
-  description: 'Seguridad en el uso del gas natural: monóxido de carbono, uso eficiente y prevención de daños.',
-};
+export const metadata: Metadata = staticMeta('/seguridad');
 
 const CARDS = [
   {

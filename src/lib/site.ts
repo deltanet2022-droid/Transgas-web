@@ -23,7 +23,11 @@ export const site = {
 /** Imágenes de la home (las mismas del HTML de referencia). Reemplazar por archivos propios cuando estén disponibles. */
 export const images = {
   hero: '/images/hero.jpg',
+  hero800: '/images/hero-800.jpg',
   about: '/images/about.jpg',
+  about560: '/images/about-560.jpg',
   infra: '/images/infra.jpg',
+  infra560: '/images/infra-560.jpg',
   safety: '/images/safety.jpg',
+  safety560: '/images/safety-560.jpg',
 } as const;

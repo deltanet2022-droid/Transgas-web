@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import { LeadForm } from '@/components/forms/LeadForm';
 import { ContactCards } from '@/components/site/ContactCards';
 import { PageBody, PageHeader } from '@/components/site/PageParts';
 import { LEAD_FORMS } from '@/lib/leads/config';
 
-export const metadata: Metadata = {
-  title: 'Contacto',
-  description: 'Contactá a Transgas: formulario, teléfonos, horario de atención, dirección y mapa.',
-};
+export const metadata: Metadata = staticMeta('/contacto');
 
 export default function ContactoPage() {
   return (

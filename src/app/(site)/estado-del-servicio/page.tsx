@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import { PageBody, PageHeader, HelpAside } from '@/components/site/PageParts';
 import { formatDateTime } from '@/lib/dates';
 import { getServiceStatusList } from '@/lib/queries';
 import { getSettings, telDigits } from '@/lib/settings';
 
-export const metadata: Metadata = {
-  title: 'Estado del servicio',
-  description: 'Cortes programados y avisos del servicio de gas por zona.',
-};
+export const metadata: Metadata = staticMeta('/estado-del-servicio');
 
 const LABEL = { EN_CURSO: 'En curso', PROGRAMADO: 'Programado', RESUELTO: 'Resuelto' } as const;
 

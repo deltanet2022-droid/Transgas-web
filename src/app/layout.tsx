@@ -1,61 +1,58 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import './motion.css';
+import { GEO } from '@/lib/seo';
 import { site } from '@/lib/site';
 
 const indexable = process.env.ALLOW_INDEXING === 'true';
 
+const DEFAULT_TITLE = 'Transgas | Gas natural en el sur de Córdoba';
+const DEFAULT_DESCRIPTION =
+  'Transgas distribuye gas natural en el sur de Córdoba desde General Levalle. Pagá tu factura, consultá tarifas y categorías, seguridad y emergencias las 24 horas.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: { default: 'Transgas | Gas natural, infraestructura y redes', template: '%s | Transgas' },
-  description:
-    'Portal institucional de Transgas: gas natural, autogestión, infraestructura y redes, seguridad, tarifas, cooperativas asociadas e información para usuarios.',
+  title: { default: DEFAULT_TITLE, template: '%s | Transgas' },
+  description: DEFAULT_DESCRIPTION,
   applicationName: 'Transgas',
-  openGraph: { siteName: 'Transgas', locale: 'es_AR', type: 'website', title: 'Transgas | Gas natural, infraestructura y redes' },
-  twitter: { card: 'summary_large_image' },
-  // Sin ALLOW_INDEXING=true (dominio de prueba) se pide a Google que no indexe el sitio.
-  ...(indexable ? {} : { robots: { index: false, follow: false } }),
-};
-
-export const viewport: Viewport = { themeColor: '#0B2A4E' };
-
-// Datos estructurados: ayudan a Google a mostrar el nombre, el logo y los datos de contacto de la organización.
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': `${site.url}/#organization`,
-      name: 'Transgas',
-      legalName: site.legalName,
-      url: site.url,
-      logo: { '@type': 'ImageObject', url: `${site.url}/brand/logo-transgas.png`, width: 350, height: 100 },
-      image: `${site.url}/opengraph-image.png`,
-      telephone: '+543385480021',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Ruta Nacional Nº 7 km 541',
-        addressLocality: 'General Levalle',
-        addressRegion: 'Córdoba',
-        addressCountry: 'AR',
-      },
-      geo: { '@type': 'GeoCoordinates', latitude: site.lat, longitude: site.lng },
-      contactPoint: [
-        { '@type': 'ContactPoint', contactType: 'customer service', telephone: '+543385480021', areaServed: 'AR', availableLanguage: 'es' },
-        { '@type': 'ContactPoint', contactType: 'emergency', telephone: '+54-800-777-8427', areaServed: 'AR', availableLanguage: 'es' },
-      ],
-    },
-    { '@type': 'WebSite', '@id': `${site.url}/#website`, url: site.url, name: 'Transgas', inLanguage: 'es-AR', publisher: { '@id': `${site.url}/#organization` } },
+  keywords: [
+    'Transgas',
+    'gas natural',
+    'gas natural Córdoba',
+    'General Levalle',
+    'distribuidora de gas',
+    'cooperativas de gas',
+    'factura de gas',
+    'tarifas de gas',
+    'emergencias de gas',
+    'gasistas matriculados',
   ],
+  authors: [{ name: 'Transgas', url: site.url }],
+  creator: 'DELTA - Sistemas y Automatizaciones',
+  publisher: 'Transgas',
+  category: 'utilities',
+  formatDetection: { telephone: true, email: true, address: true },
+  openGraph: { siteName: 'Transgas', locale: 'es_AR', type: 'website', title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION },
+  twitter: { card: 'summary_large_image', title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION },
+  // SEO local: ubicación del negocio para buscadores y mapas.
+  other: {
+    'geo.region': GEO.region,
+    'geo.placename': GEO.place,
+    'geo.position': `${site.lat};${site.lng}`,
+    ICBM: `${site.lat}, ${site.lng}`,
+  },
+  // Sin ALLOW_INDEXING=true (dominio de prueba) se pide a Google que no indexe el sitio.
+  ...(indexable ? { robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' as const, 'max-snippet': -1 } } } : { robots: { index: false, follow: false } }),
 };
+
+export const viewport: Viewport = { themeColor: '#0B2A4E', width: 'device-width', initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es-AR">
       <head>
         <link rel="preload" href="/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        {indexable && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />}
       </head>
       <body>{children}</body>
     </html>

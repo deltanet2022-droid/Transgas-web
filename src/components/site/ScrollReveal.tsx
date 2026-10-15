@@ -103,12 +103,12 @@ export function ScrollReveal() {
       window.addEventListener('scroll', schedule, { passive: true });
       window.addEventListener('resize', schedule);
       check();
-      // Seguro: revisa cada 350 ms mientras quede algo oculto (por si el navegador no emite eventos de
+      // Seguro: revisa cada 700 ms mientras quede algo oculto (por si el navegador no emite eventos de
       // scroll, por ejemplo con la pestaña en segundo plano). Se detiene solo al terminar.
       poll = window.setInterval(() => {
         check();
         if (!pending.length) window.clearInterval(poll);
-      }, 350);
+      }, 700);
     }, 60);
 
     return () => {

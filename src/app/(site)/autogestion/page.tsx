@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { PageBody, PageHeader } from '@/components/site/PageParts';
 import { site } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'Autogestión',
-  description: 'Gestioná tu servicio de gas online: factura electrónica, informar pagos y medidor, altas, bajas y nuevos servicios.',
-};
+export const metadata: Metadata = staticMeta('/autogestion');
 
 const ITEMS = [
   { href: '/autogestion/factura-electronica', icon: '✉', title: 'Factura electrónica', text: 'Recibí tu factura por correo y simplificá la gestión.' },

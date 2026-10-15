@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import { SubscribeForm } from '@/components/forms/SubscribeForm';
 import { PageBody, PageHeader } from '@/components/site/PageParts';
 
-export const metadata: Metadata = {
-  title: 'Avisos de vencimiento por mail',
-  description: 'Suscribite y recibí por correo electrónico un recordatorio antes de cada vencimiento de tu factura de gas.',
-};
+export const metadata: Metadata = staticMeta('/avisos');
 
 export default function AvisosPage() {
   return (

@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { HelpAside, PageBody, PageHeader, relatedUsers } from '@/components/site/PageParts';
 import { formatDateOnly } from '@/lib/dates';
 import { getActiveTariffs, getCurrentTariffDocument } from '@/lib/queries';
 import { annualRange, bimonthlyRange } from '@/lib/tariffRanges';
 
-export const metadata: Metadata = {
-  title: 'Tarifas',
-  description: 'Cuadro tarifario vigente de Transgas y categorías de usuarios residenciales y SGP.',
-};
+export const metadata: Metadata = staticMeta('/tarifas');
 
 export default async function TarifasPage() {
   const [doc, tariffs] = await Promise.all([getCurrentTariffDocument(), getActiveTariffs()]);
@@ -73,7 +71,7 @@ export default async function TarifasPage() {
                         <td>{typeLabel[t.type]}</td>
                         <td>
                           {t.name}
-                          {t.description && <div style={{ color: 'var(--muted)', fontSize: '.72rem', marginTop: 2 }}>{t.description}</div>}
+                          {t.description && <div style={{ color: 'var(--muted)', fontSize: '.75rem', marginTop: 2 }}>{t.description}</div>}
                         </td>
                         <td>{annualRange(t.code, t.consumptionRange) ?? 'Según cuadro tarifario'}</td>
                         <td>{bimonthlyRange(t.code) ?? '—'}</td>

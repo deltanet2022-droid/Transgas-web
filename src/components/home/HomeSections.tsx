@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Cooperative, Tariff, TariffDocument } from '@prisma/client';
-import { images, site } from '@/lib/site';
+import { site } from '@/lib/site';
+import { Photo } from '@/components/ui/Photo';
 import { annualRange, bimonthlyRange } from '@/lib/tariffRanges';
 import { ContactCards } from '@/components/site/ContactCards';
 
@@ -30,7 +31,7 @@ export function About() {
       <div className="container split">
         <div className="photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={images.about} alt="Personal técnico recorriendo una instalación de gas" loading="lazy" />
+          <Photo base="/images/about" smallWidth={560} largeWidth={1000} height={667} alt="Obra en construcción con personal trabajando sobre una estructura" sizes="(max-width: 980px) 92vw, 520px" />
           <div className="float">
             <b>Servicio + infraestructura</b>
             <p>Una identidad institucional que une la atención al usuario con el desarrollo de redes y el trabajo técnico.</p>
@@ -86,7 +87,7 @@ export function Infrastructure() {
         <div className="infra">
           <article className="infra-main">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={images.infra} alt="Construcción de red domiciliaria de gas natural" loading="lazy" />
+            <Photo base="/images/infra" smallWidth={560} largeWidth={1000} height={667} alt="Operario con casco y máscara de protección durante una tarea industrial" sizes="(max-width: 980px) 92vw, 560px" />
             <div className="infra-copy">
               <h3>Diseño y desarrollo de redes de distribución</h3>
               <p>
@@ -240,7 +241,7 @@ export function TariffSection({ tariffs, doc }: { tariffs: Tariff[]; doc: Tariff
                     <tr key={t.id}>
                       <td>
                         <b>{t.code}</b>
-                        <div style={{ color: 'var(--muted)', fontSize: '.68rem' }}>{t.type === 'SGP' ? 'Servicio general P' : 'Residencial'}</div>
+                        <div style={{ color: 'var(--muted)', fontSize: '.75rem' }}>{t.type === 'SGP' ? 'Servicio general P' : 'Residencial'}</div>
                       </td>
                       <td>{annualRange(t.code, t.consumptionRange) ?? 'Según cuadro tarifario'}</td>
                       <td>{bimonthlyRange(t.code) ?? '—'}</td>
@@ -253,7 +254,7 @@ export function TariffSection({ tariffs, doc }: { tariffs: Tariff[]; doc: Tariff
                 )}
               </tbody>
             </table>
-            <p style={{ color: 'var(--muted)', fontSize: '.7rem', margin: '10px 4px 2px' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '.75rem', margin: '10px 4px 2px' }}>
               Tu categoría se define según el consumo acumulado de los últimos seis bimestres. Valores en m³.
             </p>
           </div>
@@ -353,7 +354,7 @@ export function SafetySection() {
           </div>
           <div className="safetyimg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={images.safety} alt="Profesional inspeccionando una válvula de una instalación de gas" loading="lazy" />
+            <Photo base="/images/safety" smallWidth={560} largeWidth={1000} height={667} alt="Llama azul de una hornalla de cocina a gas natural" sizes="(max-width: 980px) 92vw, 560px" />
           </div>
         </div>
       </div>

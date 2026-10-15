@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { breadcrumbList } from '@/lib/schema';
 import { site } from '@/lib/site';
 import { getSettings, telDigits } from '@/lib/settings';
 
@@ -23,6 +25,7 @@ export function PageHeader({
 }) {
   return (
     <section className="pagehead">
+      <JsonLd data={breadcrumbList(crumbs ?? [])} />
       <div className="container">
         {topSlot && <div style={{ marginBottom: 26 }}>{topSlot}</div>}
         <nav className="crumbs" aria-label="Migas de pan">
@@ -103,14 +106,14 @@ export function HelpAside({ links, title = 'Páginas relacionadas' }: { links: {
   return (
     <>
       <div className="card static">
-        <h3>¿Necesitás ayuda?</h3>
+        <h2>¿Necesitás ayuda?</h2>
         <p>Nuestro equipo te responde de {site.schedule.replace('Lunes a viernes · ', 'lunes a viernes, ')}.</p>
         <Link className="btn primary" href="/contacto">
           Escribinos →
         </Link>
       </div>
       <div className="card static">
-        <h3>{title}</h3>
+        <h2>{title}</h2>
         <div className="sidelinks">
           {links.map((l) => (
             <Link key={l.href} href={l.href}>

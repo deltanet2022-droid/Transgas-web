@@ -1,17 +1,18 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import { HelpAside, PageBody, PageHeader } from '@/components/site/PageParts';
 import { getCooperatives } from '@/lib/queries';
 import { splitPhones } from '@/lib/phones';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { cooperativesList } from '@/lib/schema';
 
-export const metadata: Metadata = {
-  title: 'Cooperativas asociadas',
-  description: 'Directorio de cooperativas asociadas a Transgas: dirección, teléfono, correo y horario de atención.',
-};
+export const metadata: Metadata = staticMeta('/cooperativas');
 
 export default async function CooperativasPage() {
   const coops = await getCooperatives();
   return (
     <>
+      {coops.length > 0 && <JsonLd data={cooperativesList(coops)} />}
       <PageHeader
         kicker="Red cooperativa"
         title="Cooperativas asociadas"

@@ -248,3 +248,27 @@ Cada ejecución envía, a los suscriptores confirmados, el aviso de los vencimie
 
 ### Sigue fuera de alcance
 IA en el chatbot, WhatsApp Business API, SMS, multi-idioma y auditoría de cambios del CRM.
+
+## 14. SEO, GEO y AEO (buscadores y asistentes de IA)
+
+| Qué | Dónde |
+|---|---|
+| Título, descripción, URL canónica, Open Graph y Twitter Cards de **cada página** (una sola tabla para ajustarlos) | `src/lib/seo.ts` (`SEO`, `pageMeta`) |
+| **Datos estructurados** (JSON-LD): Organization + LocalBusiness (dirección, coordenadas, horarios, teléfonos, localidades atendidas), WebSite, BreadcrumbList en todas las páginas, FAQPage, NewsArticle, ItemList de cooperativas | `src/lib/schema.ts`, `src/components/seo/` |
+| **SEO local / GEO**: metaetiquetas `geo.*`, localidades en el esquema, mapa y datos NAP (nombre, dirección, teléfono) coherentes | `src/app/layout.tsx`, `src/lib/seo.ts` (`GEO`) |
+| **AEO**: página de **preguntas frecuentes** con respuestas completas y citables + FAQPage | `/preguntas-frecuentes`, `src/content/faq-public.ts` |
+| **`/llms.txt`**: resumen del sitio para asistentes de IA (ChatGPT, Claude, Perplexity, Gemini…) | `src/app/llms.txt/route.ts` |
+| `robots.txt` (permite buscadores y bots de IA; bloquea `/crm`, `/api`), `sitemap.xml` con prioridades, imágenes y fechas | `src/app/robots.ts`, `src/app/sitemap.ts` |
+| `manifest.webmanifest`, íconos, imagen para redes (1200×630) | `src/app/manifest.ts`, `src/app/*.png` |
+
+**Al pasar al dominio definitivo:** poné `ALLOW_INDEXING="true"` y `NEXT_PUBLIC_SITE_URL="https://transgas.com.ar"` en Hostinger y volvé a desplegar. Después:
+1. Registrar el sitio en **Google Search Console** y en **Bing Webmaster Tools** y enviar `https://transgas.com.ar/sitemap.xml`.
+2. Crear / reclamar la ficha de **Google Business Profile** de Transgas (mismo nombre, dirección y teléfono que el sitio) y sumar el enlace al sitio.
+3. Revisar que los teléfonos, el horario y el correo de privacidad de **CRM → Configuración** estén al día (alimentan el sitio, los datos estructurados y `/llms.txt`).
+4. Cargar noticias con regularidad (CRM → Noticias): son contenido fresco que los buscadores premian.
+
+### Pruebas realizadas antes de entregar
+- Rastreo automático de las 28 URLs del sitemap: título, descripción, canonical, un solo `<h1>`, `lang`, Open Graph / Twitter, JSON-LD válido, imágenes con `alt` y tamaño, enlaces internos y archivos especiales (0 problemas).
+- Lighthouse: SEO 100, Buenas prácticas 100 y Accesibilidad 100 en móvil y escritorio; Rendimiento 99–100 en escritorio y 86–93 en móvil (medido con la simulación de celular lento de Lighthouse).
+- Barrido de **12 anchos de pantalla** (320 a 1920 px) en las 28 páginas públicas (348 combinaciones) y de 6 anchos en las 18 pantallas del CRM: sin desbordes horizontales.
+- Chat: panel completo visible en 14 tamaños de pantalla (incluye notebooks bajas y celulares apaisados).

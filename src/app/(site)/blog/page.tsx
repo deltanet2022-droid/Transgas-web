@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { PageBody, PageHeader } from '@/components/site/PageParts';
 import { formatDateLong } from '@/lib/dates';
 import { getPublishedNews } from '@/lib/queries';
 
-export const metadata: Metadata = {
-  title: 'Novedades',
-  description: 'Noticias, obras y comunicados de Transgas.',
-};
+export const metadata: Metadata = staticMeta('/blog');
 
 export default async function BlogPage() {
   const news = await getPublishedNews();
@@ -24,7 +22,7 @@ export default async function BlogPage() {
                 <div className="cover">
                   {n.coverImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={n.coverImageUrl} alt="" loading="lazy" />
+                    <img src={n.coverImageUrl} alt="" width={1000} height={667} loading="lazy" decoding="async" />
                   ) : (
                     <span>Transgas</span>
                   )}

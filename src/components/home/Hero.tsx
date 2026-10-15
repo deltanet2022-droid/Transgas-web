@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { site, images } from '@/lib/site';
+import { Photo } from '@/components/ui/Photo';
+import { site } from '@/lib/site';
 import { getSettings, telDigits } from '@/lib/settings';
 import { BuildingIcon, ChartIcon, ReceiptIcon, ShieldIcon } from '@/components/ui/Icons';
 
@@ -9,7 +10,7 @@ export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
     <section className="hero" id="inicio">
       <div className="hero-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images.hero} alt="" aria-hidden width={1600} height={1067} fetchPriority="high" decoding="async" />
+        <Photo base="/images/hero" smallWidth={800} largeWidth={1600} height={1067} alt="" sizes="100vw" priority />
       </div>
       <div className="container hero-grid">
         <div>

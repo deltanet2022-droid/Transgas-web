@@ -13,11 +13,14 @@ export function Avatar({
   size = 48,
   animated = true,
   talking = false,
+  decorative = false,
   className = '',
 }: {
   size?: number;
   animated?: boolean;
   talking?: boolean;
+  /** Dentro de un botón o junto a un texto que ya lo nombra: el lector de pantalla lo ignora. */
+  decorative?: boolean;
   className?: string;
 }) {
   const uid = useId().replace(/:/g, '');
@@ -28,8 +31,7 @@ export function Avatar({
       width={size}
       height={size}
       viewBox="0 0 120 120"
-      role="img"
-      aria-label={`${ASSISTANT_NAME}, asistente virtual de Transgas`}
+      {...(decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': `${ASSISTANT_NAME}, asistente virtual de Transgas` })}
     >
       <defs>
         <clipPath id={id('clip')}>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { signOut } from '@/app/crm/login/actions';
 
 const ITEMS = [
@@ -32,9 +33,25 @@ export function Sidebar({ user }: { user: { email: string; name: string | null; 
   const pathname = usePathname();
   const isAdmin = user.role === 'ADMIN';
   const visible = ITEMS.filter((i: Item) => !('adminOnly' in i && i.adminOnly) || isAdmin);
+  const [open, setOpen] = useState(false);
+
+  // En el celular el menú es un panel que se abre con el botón: al elegir una sección se cierra solo.
+  useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <aside className="crm-side">
+    <>
+    <header className="crm-topbar">
+      <Link className="brandrow" href="/crm">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/logo-transgas-white.png" alt="Transgas" width={104} height={30} />
+        <span>CRM</span>
+      </Link>
+      <button type="button" className="crm-menubtn" aria-expanded={open} aria-controls="crm-side" onClick={() => setOpen((o) => !o)}>
+        {open ? 'Cerrar ✕' : 'Menú ☰'}
+      </button>
+    </header>
+    {open && <div className="crm-scrim" onClick={() => setOpen(false)} aria-hidden />}
+    <aside className={`crm-side${open ? ' open' : ''}`} id="crm-side">
       <Link className="brandrow" href="/crm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/brand/logo-transgas-white.png" alt="Transgas" width={119} height={34} />
@@ -77,5 +94,6 @@ export function Sidebar({ user }: { user: { email: string; name: string | null; 
         </form>
       </div>
     </aside>
+    </>
   );
 }

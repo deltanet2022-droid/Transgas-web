@@ -25,8 +25,9 @@ const NAV: NavItem[] = [
   { label: 'Seguridad', href: '/seguridad', match: ['/seguridad'] },
   {
     label: 'Información',
-    match: ['/ayuda', '/usuarios', '/profesionales', '/blog', '/estado-del-servicio'],
+    match: ['/ayuda', '/usuarios', '/profesionales', '/blog', '/estado-del-servicio', '/preguntas-frecuentes'],
     children: [
+      { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
       { label: 'Entender tu factura', href: '/ayuda/entender-tu-factura' },
       { label: 'Inquilinos', href: '/ayuda/inquilinos' },
       { label: 'Derechos de usuarios', href: '/usuarios/derechos' },

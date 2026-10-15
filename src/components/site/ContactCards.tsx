@@ -9,7 +9,7 @@ export async function ContactCards() {
   return (
     <div className="contactgrid">
       <article className="card contact static">
-        <h3>Atención general</h3>
+        <h2>Atención general</h2>
         <p>Datos oficiales de contacto publicados por Transgas.</p>
         <div className="contactlist">
           <div className="contactitem">
@@ -70,7 +70,7 @@ export async function ContactCards() {
       </article>
 
       <article className="card contact emergency static">
-        <h3>Emergencias y suministro</h3>
+        <h2>Emergencias y suministro</h2>
         <p>Canales prioritarios publicados por Transgas para situaciones que requieren atención.</p>
         <div className="emergency-box">
           <small>EMERGENCIAS</small>

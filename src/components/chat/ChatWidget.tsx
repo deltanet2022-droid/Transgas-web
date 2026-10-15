@@ -220,20 +220,21 @@ export function ChatWidget() {
         aria-label={open ? 'Cerrar asistente' : `Abrir asistente virtual ${ASSISTANT_NAME}`}
         onClick={() => setOpen((o) => !o)}
       >
-        {badge && <span className="chatbadge">1</span>}
-        {open ? <span className="fabx">×</span> : <Avatar size={66} />}
+        {badge && <span className="chatbadge" aria-hidden />}
+        {open ? <span className="fabx">×</span> : <Avatar size={66} decorative />}
       </button>
 
       <section className={`chatpanel${open ? ' open' : ''}`} id="chatpanel" role="dialog" aria-label={`Asistente virtual ${ASSISTANT_NAME}`} aria-hidden={!open}>
         <div className="chathead">
           <div className="avatar">
-            <Avatar size={46} talking={busy} />
+            <Avatar size={46} talking={busy} decorative />
           </div>
           <div>
             <b>{ASSISTANT_NAME} · Asistente de Transgas</b>
             <small>
               <span className="online" />
-              En línea · respuestas automáticas
+              En línea ·{' '}
+              <Link href="/privacidad">Privacidad</Link>
             </small>
           </div>
           <button className="chatclose" onClick={() => setOpen(false)} aria-label="Cerrar">
@@ -309,9 +310,6 @@ export function ChatWidget() {
             →
           </button>
         </form>
-        <div className="chatnote">
-          Asistente virtual automático. No pide contraseñas ni datos bancarios: no los escribas acá. La conversación se guarda para mejorar la atención (<Link href="/privacidad">Política de Privacidad</Link>).
-        </div>
       </section>
     </>
   );

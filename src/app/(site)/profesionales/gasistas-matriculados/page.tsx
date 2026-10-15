@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
+import { staticMeta } from '@/lib/seo';
 import { Callout, HelpAside, PageBody, PageHeader, relatedSafety } from '@/components/site/PageParts';
 import { getActiveInstallers } from '@/lib/queries';
 import { splitPhones } from '@/lib/phones';
 
-export const metadata: Metadata = {
-  title: 'Gasistas matriculados',
-  description: 'Listado de gasistas matriculados con matrícula, domicilio, localidad y datos de contacto.',
-};
+export const metadata: Metadata = staticMeta('/profesionales/gasistas-matriculados');
 
 export default async function GasistasPage() {
   const installers = await getActiveInstallers();

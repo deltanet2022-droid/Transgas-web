@@ -5,6 +5,7 @@ import { getPageDef } from '@/content/pages';
 import { prisma, safe } from '@/lib/db';
 import { memo } from '@/lib/memo';
 import { sanitizeRichText } from '@/lib/sanitize';
+import { pageMeta, SEO } from '@/lib/seo';
 import { fillTokens } from '@/lib/tokens';
 
 /** Contenido vigente de una página: lo editado en el CRM o, si nadie lo editó, el original del código. */
@@ -26,7 +27,13 @@ export async function getEffectivePage(slug: string) {
 export async function contentMetadata(slug: string): Promise<Metadata> {
   const page = await getEffectivePage(slug);
   if (!page) return {};
-  return { title: page.title, description: page.def.description };
+  const seo = SEO[page.def.path];
+  // Si alguien editó el título desde el CRM, se respeta; si no, se usa el título optimizado para buscadores.
+  return pageMeta({
+    title: page.edited ? page.title : seo?.title ?? page.title,
+    description: seo?.description ?? page.def.description,
+    path: page.def.path,
+  });
 }
 
 /** Página informativa editable desde el CRM → Páginas. */

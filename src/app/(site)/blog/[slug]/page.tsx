@@ -6,17 +6,24 @@ import { formatDateLong } from '@/lib/dates';
 import { getPublishedNewsBySlug } from '@/lib/queries';
 import { sanitizeRichText } from '@/lib/sanitize';
 import { fillTokens } from '@/lib/tokens';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { newsArticle } from '@/lib/schema';
+import { pageMeta } from '@/lib/seo';
 
 type Props = { params: { slug: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const n = await getPublishedNewsBySlug(params.slug);
-  if (!n) return { title: 'Noticia no encontrada' };
-  return {
+  if (!n) return { title: 'Noticia no encontrada', robots: { index: false, follow: false } };
+  return pageMeta({
     title: n.title,
-    description: n.excerpt ?? undefined,
-    openGraph: { title: n.title, description: n.excerpt ?? undefined, images: n.coverImageUrl ? [n.coverImageUrl] : undefined },
-  };
+    description: n.excerpt || `${n.title}. Novedades de Transgas para usuarios y cooperativas del sur de Córdoba.`,
+    path: `/blog/${n.slug}`,
+    image: n.coverImageUrl ?? undefined,
+    type: 'article',
+    publishedTime: n.publishedAt?.toISOString(),
+    modifiedTime: n.updatedAt?.toISOString(),
+  });
 }
 
 export default async function NewsDetailPage({ params }: Props) {
@@ -26,6 +33,7 @@ export default async function NewsDetailPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd data={newsArticle(n)} />
       <PageHeader
         kicker={n.category ?? 'Novedades'}
         title={n.title}
@@ -37,7 +45,7 @@ export default async function NewsDetailPage({ params }: Props) {
           {n.coverImageUrl && (
             <div className="cover">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={n.coverImageUrl} alt="" />
+              <img src={n.coverImageUrl} alt={n.title} width={1000} height={667} fetchPriority="high" decoding="async" />
             </div>
           )}
           {/* El HTML se sanitiza al guardar en el CRM y de nuevo acá (defensa en profundidad). */}
