@@ -33,7 +33,7 @@ const MENU: Chip[] = [
   'Hablar con una persona',
 ].map((l) => ({ label: l, q: l }));
 
-const GREETING = `¡Hola! 👋 Soy ${ASSISTANT_NAME}, la asistente virtual de Transgas. Estoy para ayudarte con tu factura, trámites, tarifas, cortes de servicio, seguridad y emergencias, las 24 horas.\n\n¿Sobre qué querés hablar? Elegí una opción o escribime tu consulta.`;
+const GREETING = `¡Hola! 👋 Soy ${ASSISTANT_NAME}, la asistente virtual de Transgas. Estoy para ayudarte con tu factura, trámites, tarifas, cortes de servicio, seguridad y emergencias, las 24 horas.\n\n¿Sobre qué querés hablar?`;
 const STORAGE_KEY = 'transgas-chat-conversation';
 const TEASER_KEY = 'transgas-chat-teaser';
 /** Demora mínima antes de mostrar la respuesta, para que la charla se sienta natural. */

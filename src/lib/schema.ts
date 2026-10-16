@@ -21,7 +21,7 @@ export function organizationGraph(s: SiteSettings, coops: Pick<Cooperative, 'nam
         description: `Transgas distribuye gas natural en el ${GEO.areaLabel} y desarrolla redes de gas junto a una red de cooperativas asociadas. Atención al usuario, autogestión online, emergencias las 24 horas e información de seguridad.`,
         url: absUrl('/'),
         logo: { '@type': 'ImageObject', url: absUrl('/brand/logo-transgas.png'), width: 350, height: 100 },
-        image: [absUrl('/opengraph-image.png'), absUrl('/images/hero.jpg')],
+        image: [absUrl('/opengraph-image.png'), absUrl('/images/hero-gnc.jpg')],
         telephone: intlPhone(s.attentionPhone),
         address: {
           '@type': 'PostalAddress',

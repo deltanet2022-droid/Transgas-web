@@ -10,7 +10,7 @@ export async function Hero({ serviceAlert }: { serviceAlert: boolean }) {
     <section className="hero" id="inicio">
       <div className="hero-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <Photo base="/images/hero" smallWidth={800} largeWidth={1600} height={1067} alt="" sizes="100vw" priority />
+        <Photo base="/images/hero-gnc" smallWidth={800} largeWidth={1360} height={767} alt="Estación de GNC Trans Gas con sus surtidores y el minimercado" sizes="100vw" priority />
       </div>
       <div className="container hero-grid">
         <div>
