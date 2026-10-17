@@ -24,8 +24,6 @@ export const site = {
 export const images = {
   hero: '/images/hero-gnc.jpg',
   hero800: '/images/hero-gnc-800.jpg',
-  about: '/images/about.jpg',
-  about560: '/images/about-560.jpg',
   infra: '/images/infra.jpg',
   infra560: '/images/infra-560.jpg',
   safety: '/images/safety.jpg',

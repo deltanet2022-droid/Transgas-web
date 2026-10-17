@@ -280,3 +280,4 @@ picture { display: contents; }
 .tt .bar { flex-wrap: wrap; }
 .cform > *, .cform .tt { min-width: 0; max-width: 100%; }
 .chatbadge::after { content: "1"; }
+.photo img { object-position: 30% 50%; }

@@ -30,8 +30,7 @@ export function About() {
     <section className="section" id="nosotros">
       <div className="container split">
         <div className="photo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <Photo base="/images/about" smallWidth={560} largeWidth={1000} height={667} alt="Obra en construcción con personal trabajando sobre una estructura" sizes="(max-width: 980px) 92vw, 520px" />
+          <Photo base="/images/about-equipo" smallWidth={560} largeWidth={1000} height={559} alt="Técnico de Transgas con casco y uniforme trabajando en una caja de conexión, junto a una camioneta de la empresa" sizes="(max-width: 980px) 92vw, 520px" />
           <div className="float">
             <b>Servicio + infraestructura</b>
             <p>Una identidad institucional que une la atención al usuario con el desarrollo de redes y el trabajo técnico.</p>
