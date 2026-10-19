@@ -49,6 +49,20 @@ export async function Footer() {
           <Link href="/contacto">Contacto</Link>
         </div>
       </div>
+      <div className="container footreg">
+        <p>Organismo regulador y de control</p>
+        <a href="https://www.enargas.gob.ar/" target="_blank" rel="noopener" aria-label="Ente Nacional Regulador del Gas y la Electricidad (ENReGE): ir al sitio del ente">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/enrege-negativo.png"
+            alt="ENReGE, Ente Nacional Regulador del Gas y la Electricidad"
+            width={260}
+            height={97}
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      </div>
       <div className="container footbottom">
         <span>© {new Date().getFullYear()} Transgas Ltda.</span>
         <span>
