@@ -33,7 +33,14 @@ const nextConfig = {
   experimental: {
     // Subida de PDF / imágenes desde el CRM mediante Server Actions
     serverActions: { bodySizeLimit: '10mb' },
+    // Compilación liviana para hostings compartidos (Hostinger): un solo proceso y sin hilos extra.
+    // Con varios procesos en paralelo el servidor podía abortar la compilación (SIGABRT) por límite de recursos.
+    cpus: 1,
+    workerThreads: false,
+    webpackBuildWorker: false,
   },
+  // Más tiempo por página al generar el sitio (el servidor compartido puede ser lento).
+  staticPageGenerationTimeout: 180,
   async redirects() {
     return Object.entries(LEGACY_REDIRECTS).map(([source, destination]) => ({ source, destination, permanent: true }));
   },
