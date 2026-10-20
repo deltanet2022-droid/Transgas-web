@@ -13,6 +13,25 @@ export async function Footer() {
             <img src="/brand/logo-transgas-white.png" alt="Grupo Transgas" width={175} height={50} loading="lazy" decoding="async" />
           </span>
           <p>{site.legalName} Servicio, infraestructura, información y comunidad.</p>
+          <div className="footreg">
+            <span>Organismo regulador y de control</span>
+            <a
+              href="https://www.enargas.gob.ar/"
+              target="_blank"
+              rel="noopener"
+              aria-label="Ente Nacional Regulador del Gas y la Electricidad (ENReGE): ir al sitio del ente"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/enrege-negativo.png"
+                alt="ENReGE, Ente Nacional Regulador del Gas y la Electricidad"
+                width={250}
+                height={93}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
         </div>
         <div className="foot">
           <h2>Usuarios</h2>
@@ -25,6 +44,7 @@ export async function Footer() {
           <Link href="/usuarios/derechos">Derechos de usuarios</Link>
           <Link href="/avisos">Avisos de vencimiento</Link>
           <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>
+          <Link href="/privacidad">Política de privacidad</Link>
         </div>
         <div className="foot">
           <h2>Infraestructura</h2>
@@ -49,31 +69,14 @@ export async function Footer() {
           <Link href="/contacto">Contacto</Link>
         </div>
       </div>
-      <div className="container footreg">
-        <p>Organismo regulador y de control</p>
-        <a href="https://www.enargas.gob.ar/" target="_blank" rel="noopener" aria-label="Ente Nacional Regulador del Gas y la Electricidad (ENReGE): ir al sitio del ente">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/enrege-negativo.png"
-            alt="ENReGE, Ente Nacional Regulador del Gas y la Electricidad"
-            width={260}
-            height={97}
-            loading="lazy"
-            decoding="async"
-          />
-        </a>
-      </div>
       <div className="container footbottom">
         <span>© {new Date().getFullYear()} Transgas Ltda.</span>
         <span>
-          <Link href="/privacidad">Política de Privacidad</Link> · {site.address} · <a href={`tel:${telDigits(s.attentionPhone)}`}>{s.attentionPhone}</a>
+          Sitio desarrollado por{' '}
+          <a href="https://delta.net.ar" target="_blank" rel="noopener">
+            DELTA - Sistemas y Automatizaciones
+          </a>
         </span>
-      </div>
-      <div className="container footcredit">
-        Sitio desarrollado por{' '}
-        <a href="https://delta.net.ar" target="_blank" rel="noopener">
-          DELTA - Sistemas y Automatizaciones
-        </a>
       </div>
     </footer>
   );

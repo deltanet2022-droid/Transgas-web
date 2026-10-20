@@ -272,3 +272,12 @@ IA en el chatbot, WhatsApp Business API, SMS, multi-idioma y auditoría de cambi
 - Lighthouse: SEO 100, Buenas prácticas 100 y Accesibilidad 100 en móvil y escritorio; Rendimiento 99–100 en escritorio y 86–93 en móvil (medido con la simulación de celular lento de Lighthouse).
 - Barrido de **12 anchos de pantalla** (320 a 1920 px) en las 28 páginas públicas (348 combinaciones) y de 6 anchos en las 18 pantallas del CRM: sin desbordes horizontales.
 - Chat: panel completo visible en 14 tamaños de pantalla (incluye notebooks bajas y celulares apaisados).
+
+## 15. Límites del hosting (Hostinger) — leer antes de tocar el build
+
+El sitio corre en un hosting compartido con pocos hilos y poca memoria. Un deploy falló una vez con `Resource temporarily unavailable (os error 11)` / `SIGABRT` porque el motor de Prisma abría muchos hilos durante `next build`. Por eso:
+- `next.config.mjs` fuerza una compilación liviana (`cpus: 1`, `workerThreads: false`, `webpackBuildWorker: false`). **No quitar.**
+- No agregar dependencias nativas pesadas (por ejemplo `sharp`) ni tareas paralelas al build. Las fotos se optimizan afuera y se suben ya listas a `public/`.
+- Las páginas no deben consultar la base al compilar (hoy se arman en cada visita y se guardan unos segundos en memoria).
+- Si el error vuelve: agregar la variable de entorno `TOKIO_WORKER_THREADS=1` en hPanel y redesplegar.
+- Linux distingue mayúsculas en nombres de archivo: cuidar que imports y rutas de `public/` coincidan exactamente.

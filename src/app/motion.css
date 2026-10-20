@@ -13,9 +13,6 @@
 .brand .brandtxt { border-left: 1px solid var(--line); padding-left: 12px; }
 .footlogo { display: inline-block; }
 .footlogo img { height: 46px; width: auto; display: block; }
-.footcredit { padding: 0 0 22px; font-size: .76rem; color: #9fb8ca; text-align: center; }
-.footcredit a { color: #d9ecf7; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.footcredit a:hover { color: #fff; }
 .crm-side .brandrow { margin: 0 4px 18px; padding: 4px 6px 16px; border-bottom: 1px solid #ffffff1f; }
 .crm-side .brandrow img { height: 34px; width: auto; display: block; }
 .crm-side .brandrow span { color: #9fd4ee; font: 800 .75rem Manrope; letter-spacing: .12em; margin-left: 8px; padding-left: 10px; border-left: 1px solid #ffffff33; }
@@ -283,10 +280,17 @@ picture { display: contents; }
 .photo img { object-position: 40% 50%; }
 
 /* ───── Logo del ente regulador (ENReGE) en el pie ─────
-   Se respeta la guía de marca: versión negativa sobre fondo oscuro, proporciones intactas,
-   ancho mínimo digital de 250 px y área de seguridad libre alrededor. */
-.footreg { border-top: 1px solid #ffffff18; padding: 26px 0 30px; display: flex; flex-direction: column; align-items: flex-start; gap: 30px; }
-.footreg p { font-size: .78rem; color: #9fb8ca; margin: 0; }
-.footreg a { display: block; padding: 4px 0; line-height: 0; }
-.footreg img { width: 260px; min-width: 250px; height: auto; display: block; }
-@media (min-width: 761px) { .footreg { flex-direction: row; align-items: center; justify-content: space-between; } }
+   Guía de marca: versión negativa sobre fondo oscuro, proporciones intactas, ancho digital mínimo de 250 px
+   y área de seguridad libre alrededor. Va dentro de la columna de la marca, alineado con el resto del pie. */
+.footreg { margin-top: 30px; padding-top: 22px; border-top: 1px solid #ffffff18; display: grid; gap: 22px; justify-items: start; }
+.footreg span { font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: #8ca2b4; }
+.footreg a { display: block; line-height: 0; border-radius: 6px; transition: opacity .2s ease; }
+.footreg a:hover { opacity: .85; }
+.footreg img { width: 250px; height: auto; display: block; }
+/* Barra inferior: copyright a la izquierda, crédito a la derecha */
+.footbottom { align-items: center; }
+.footbottom a { color: #d9ecf7; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.footbottom a:hover { color: #fff; }
+/* El botón flotante del chat no debe tapar el texto de la barra inferior */
+.footbottom { padding-right: 100px; }
+@media (max-width: 760px) { .footbottom { padding-right: 0; padding-bottom: 88px; } }
