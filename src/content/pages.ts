@@ -77,7 +77,7 @@ export const PAGE_DEFS: PageDef[] = [
 <blockquote><strong>¿Cómo sé cuál es la mía?</strong> La categoría figura en tu factura. Si tenés dudas o creés que no te corresponde, escribinos desde <a href="/contacto">contacto</a>.</blockquote>
 <h2>Categorías residenciales</h2>
 <p>Para hogares. Se subdividen según el consumo anual (en metros cúbicos, m³):</p>
-<ul><li><strong>R1:</strong> hasta 500 m³ (los consumos más bajos).</li><li><strong>R2-1:</strong> de 501 a 650 m³.</li><li><strong>R2-2:</strong> de 651 a 800 m³.</li><li><strong>R2-3:</strong> de 801 a 1.000 m³.</li><li><strong>R3-1:</strong> de 1.001 a 1.250 m³.</li><li><strong>R3-2:</strong> de 1.251 a 1.500 m³.</li><li><strong>R3-3:</strong> de 1.501 a 1.800 m³.</li><li><strong>R3-4:</strong> más de 1.800 m³ (los consumos más altos).</li></ul>
+<ul><li><strong>R1:</strong> hasta 500 m³ (los consumos más bajos).</li><li><strong>R2-1:</strong> de 501 a 650 m³.</li><li><strong>R2-2:</strong> de 651 a 800 m³.</li><li><strong>R2-3:</strong> de 801 a 1.000 m³.</li><li><strong>R3-1:</strong> de 1.001 a 1.250 m³.</li><li><strong>R3-2:</strong> de 1.251 a 1.500 m³.</li><li><strong>R3-3:</strong> de 1.501 a 1.800 m³.</li><li><strong>R3-4:</strong> de 1.801 a 3.000 m³.</li><li><strong>R4:</strong> más de 3.000 m³ (los consumos más altos).</li></ul>
 <h2>Servicio General P (SGP)</h2>
 <p>Para comercios, oficinas y pequeñas industrias. También se define por el consumo anual:</p>
 <ul><li><strong>SGP1:</strong> hasta 12.000 m³.</li><li><strong>SGP2:</strong> de 12.001 a 108.000 m³.</li><li><strong>SGP3-a:</strong> de 108.001 a 180.000 m³.</li><li><strong>SGP3-b:</strong> más de 180.000 m³.</li></ul>

@@ -35,7 +35,7 @@ export const PUBLIC_FAQ: PublicFaqGroup[] = [
       },
       {
         q: '¿En qué categoría tarifaria estoy?',
-        a: 'Tu categoría figura en tu factura y se define según tu consumo de los últimos seis bimestres. En hogares, R1 llega hasta 500 m³ al año, R2 va de 501 a 1.000 m³ (R2-1, R2-2 y R2-3) y R3 supera los 1.000 m³ (R3-1 a R3-4). En comercios y pequeñas industrias, SGP1 llega hasta 12.000 m³ al año, SGP2 hasta 108.000 m³, SGP3-a hasta 180.000 m³ y SGP3-b lo supera.',
+        a: 'Tu categoría figura en tu factura y se define según tu consumo de los últimos seis bimestres. En hogares, R1 llega hasta 500 m³ al año, R2 va de 501 a 1.000 m³ (R2-1, R2-2 y R2-3) y R3 va de 1.001 a 3.000 m³ (R3-1 a R3-4) y R4 supera los 3.000 m³. En comercios y pequeñas industrias, SGP1 llega hasta 12.000 m³ al año, SGP2 hasta 108.000 m³, SGP3-a hasta 180.000 m³ y SGP3-b lo supera.',
         links: [
           { label: 'Categorías de usuarios', href: '/tarifas/categorias' },
           { label: 'Tarifas y cuadro tarifario', href: '/tarifas' },

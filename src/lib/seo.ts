@@ -67,11 +67,11 @@ export function pageMeta({ title, description, path, image, type = 'website', no
 export const SEO: Record<string, { title: string; description: string }> = {
   '/tarifas': {
     title: 'Tarifas y cuadro tarifario de gas natural',
-    description: 'Cuadro tarifario vigente de Transgas y rangos de consumo de cada categoría residencial (R1 a R3) y de servicio general (SGP). Descargá el documento oficial.',
+    description: 'Cuadro tarifario vigente de Transgas y rangos de consumo de cada categoría residencial (R1 a R4) y de servicio general (SGP). Descargá el documento oficial.',
   },
   '/tarifas/categorias': {
-    title: 'Categorías de usuarios de gas: R1, R2, R3 y SGP',
-    description: 'Rangos de consumo anual de cada categoría tarifaria de Transgas (R1 a R3-4 y SGP1 a SGP3-b) y cómo se calcula con los últimos seis bimestres.',
+    title: 'Categorías de usuarios de gas: R1 a R4 y SGP',
+    description: 'Rangos de consumo anual de cada categoría tarifaria de Transgas (R1 a R4 y SGP1 a SGP3-b) y cómo se calcula con los últimos seis bimestres.',
   },
   '/tarifas/tarifa-social': {
     title: 'Tarifa social de gas natural',

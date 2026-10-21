@@ -1,5 +1,5 @@
 /**
- * Rangos de consumo oficiales de cada categoría tarifaria (fuente: transgas.com.ar, "Categorías de usuarios").
+ * Rangos de consumo oficiales de cada categoría tarifaria (fuente: transgas.com.ar, "Categorías de usuarios", y segmentación de la Res. ENARGAS I-409/08 con la categoría R4 que la completa).
  * La categoría se determina con el consumo acumulado de los últimos seis bimestres; el equivalente
  * por bimestre es una aproximación (consumo anual ÷ 6) para orientar al usuario.
  *
@@ -15,7 +15,8 @@ const RANGES: Record<string, Range> = {
   'R3-1': { min: 1001, max: 1250 },
   'R3-2': { min: 1251, max: 1500 },
   'R3-3': { min: 1501, max: 1800 },
-  'R3-4': { min: 1801, max: null },
+  'R3-4': { min: 1801, max: 3000 },
+  R4: { min: 3001, max: null },
   SGP1: { min: 0, max: 12000 },
   SGP2: { min: 12001, max: 108000 },
   'SGP3-a': { min: 108001, max: 180000 },

@@ -63,6 +63,7 @@ async function seedTariffs() {
     { code: 'R3-2', name: 'Residencial 3 · Subcategoría 2', type: 'RESIDENCIAL' },
     { code: 'R3-3', name: 'Residencial 3 · Subcategoría 3', type: 'RESIDENCIAL' },
     { code: 'R3-4', name: 'Residencial 3 · Subcategoría 4', type: 'RESIDENCIAL' },
+    { code: 'R4', name: 'Residencial 4', type: 'RESIDENCIAL' },
     { code: 'SGP1', name: 'Servicio General P · 1', type: 'SGP' },
     { code: 'SGP2', name: 'Servicio General P · 2', type: 'SGP' },
     { code: 'SGP3-a', name: 'Servicio General P · 3-a', type: 'SGP' },

@@ -25,7 +25,7 @@ export function TariffForm({ tariff }: { tariff?: Tariff }) {
         <textarea id="description" name="description" rows={2} maxLength={300} defaultValue={tariff?.description ?? ''} />
       </Field>
       <div className="row r3">
-        <Field label="Rango de consumo (opcional)" htmlFor="consumptionRange" help='Ej. "Hasta 1.000 m³/año". Si queda vacío se muestra "Consumo anual".'>
+        <Field label="Rango de consumo (opcional)" htmlFor="consumptionRange" help="Ej. «Hasta 500 m³/año». Si queda vacío, el sitio muestra el rango oficial de la categoría.">
           <input id="consumptionRange" name="consumptionRange" type="text" maxLength={120} defaultValue={tariff?.consumptionRange ?? ''} />
         </Field>
         <Field label="Orden" htmlFor="sortOrder" help="Menor número = aparece primero.">

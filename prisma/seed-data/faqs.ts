@@ -464,10 +464,10 @@ export const faqs: SeedFaq[] = [
   {
     question: '¿En qué categoría estoy?',
     category: 'Tarifas',
-    palabrasClave: ['categoria', 'categorias', 'categoria residencial', 'r1', 'r2', 'r3', 'sgp', 'en que categoria estoy', 'categoria de usuario'],
+    palabrasClave: ['categoria', 'categorias', 'categoria residencial', 'r1', 'r2', 'r3', 'r4', 'sgp', 'en que categoria estoy', 'categoria de usuario'],
     respuestas: [
-      'Tu categoría depende de tu consumo de los últimos seis bimestres. Residenciales: R1 hasta 500 m³ al año; R2-1 de 501 a 650; R2-2 de 651 a 800; R2-3 de 801 a 1.000; R3-1 de 1.001 a 1.250; R3-2 de 1.251 a 1.500; R3-3 de 1.501 a 1.800; R3-4 más de 1.800. Comercios (SGP): SGP1 hasta 12.000 m³; SGP2 de 12.001 a 108.000; SGP3-a de 108.001 a 180.000; SGP3-b más de 180.000. Tu categoría figura en tu factura; más detalle en /tarifas/categorias.',
-      'La categoría se define por el consumo anual: R1 llega hasta 500 m³ y R3-4 supera los 1.800 m³ (en comercios, SGP1 llega hasta 12.000 m³). En /tarifas ves cada rango con su equivalente aproximado por bimestre, y tu categoría figura en tu factura.',
+      'Tu categoría depende de tu consumo de los últimos seis bimestres. Residenciales: R1 hasta 500 m³ al año; R2-1 de 501 a 650; R2-2 de 651 a 800; R2-3 de 801 a 1.000; R3-1 de 1.001 a 1.250; R3-2 de 1.251 a 1.500; R3-3 de 1.501 a 1.800; R3-4 de 1.801 a 3.000; R4 más de 3.000. Comercios (SGP): SGP1 hasta 12.000 m³; SGP2 de 12.001 a 108.000; SGP3-a de 108.001 a 180.000; SGP3-b más de 180.000. Tu categoría figura en tu factura; más detalle en /tarifas/categorias.',
+      'La categoría se define por el consumo anual: R1 llega hasta 500 m³ y R4 supera los 3.000 m³ (en comercios, SGP1 llega hasta 12.000 m³). En /tarifas ves cada rango con su equivalente aproximado por bimestre, y tu categoría figura en tu factura.',
     ],
     followUps: ['Tarifa social', 'Cómo leer mi factura'],
   },

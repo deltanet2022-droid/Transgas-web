@@ -71,7 +71,7 @@ Hay tres migraciones: `init` (tablas), `enable_rls` y `chat_guidance_and_directo
 El **seed** crea (solo lo que falta, **nunca pisa** lo que ya editaste en el CRM; las FAQ existentes solo se renuevan con `npm run db:seed:faqs`):
 
 - 64 preguntas frecuentes (charla guiada: saludo, menú, facturación, trámites, servicio, seguridad, tarifas, cooperativas por localidad…) con palabras clave, variantes de respuesta y botones de seguimiento.
-- 12 categorías tarifarias (R1, R2-1…R3-4, SGP1…SGP3-b) y 1 cuadro tarifario vigente (enlace al PDF actual del sitio viejo).
+- 13 categorías tarifarias (R1, R2-1…R3-4, R4, SGP1…SGP3-b) y 1 cuadro tarifario vigente (enlace al PDF actual del sitio viejo).
 - 2 noticias publicadas, 1 vencimiento vigente, 1 aviso de servicio **de ejemplo** (programado).
 - Las 8 cooperativas con dirección, teléfonos, correo y horario reales (archivo `prisma/seed-data/directories.ts`). Si ya existían vacías, se completan sin pisar lo editado.
 - 24 gasistas matriculados reales (y se eliminan los 3 de ejemplo). Todo se mantiene después desde el CRM: agregar, editar y eliminar.
