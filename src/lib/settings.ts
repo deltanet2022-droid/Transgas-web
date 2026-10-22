@@ -36,7 +36,8 @@ function defaults(): SiteSettings {
     supplyPhone: site.supplyPhone,
     attentionPhone: site.phone,
     alertBanner: { enabled: false, message: '', linkLabel: '', linkUrl: '', tone: 'danger', until: '' },
-    notifyEmails: (process.env.NOTIFY_EMAILS ?? '')
+    // Por defecto, los formularios llegan a gerencia. Se puede cambiar en el CRM → Configuración.
+    notifyEmails: (process.env.NOTIFY_EMAILS || 'gerencia@transgas.com.ar')
       .split(/[,;\s]+/)
       .map((e) => e.trim())
       .filter(Boolean),

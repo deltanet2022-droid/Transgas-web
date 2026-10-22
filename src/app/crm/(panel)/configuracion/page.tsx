@@ -71,7 +71,7 @@ export default async function SettingsPage() {
             htmlFor="notifyEmails"
             help="Uno por línea o separados por comas. Cada formulario que llega al CRM genera un mail a estas casillas."
           >
-            <textarea id="notifyEmails" name="notifyEmails" rows={3} defaultValue={s.notifyEmails.join('\n')} placeholder="atencion@transgas.com.ar" />
+            <textarea id="notifyEmails" name="notifyEmails" rows={3} defaultValue={s.notifyEmails.join('\n')} placeholder="gerencia@transgas.com.ar" />
           </Field>
 
           <h2 style={{ margin: '14px 0 0' }}>Privacidad y avisos de vencimiento</h2>
