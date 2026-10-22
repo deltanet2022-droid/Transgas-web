@@ -11,12 +11,12 @@ export async function verifyMfa(_prev: ActionState, fd: FormData): Promise<Actio
   const code = formString(fd, 'code').replace(/\s/g, '');
   if (!/^\d{6}$/.test(code)) return fail('El código tiene 6 dígitos.');
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect('/crm/login');
-  if (!rateLimit(`mfa:${user.id}`, 8, 15 * 60_000) || !rateLimit(`mfa:ip:${clientIpFromHeaders()}`, 30, 15 * 60_000)) {
+  if (!rateLimit(`mfa:${user.id}`, 8, 15 * 60_000) || !rateLimit(`mfa:ip:${await clientIpFromHeaders()}`, 30, 15 * 60_000)) {
     return fail('Demasiados intentos. Esperá unos minutos.');
   }
 

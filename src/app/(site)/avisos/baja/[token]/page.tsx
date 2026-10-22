@@ -6,7 +6,11 @@ import { unsubscribe } from '../../actions';
 
 export const metadata: Metadata = { title: 'Darme de baja de los avisos', robots: { index: false, follow: false } };
 
-export default async function UnsubscribePage({ params, searchParams }: { params: { token: string }; searchParams: { ok?: string } }) {
+export default async function UnsubscribePage(
+  props: { params: Promise<{ token: string }>; searchParams: Promise<{ ok?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const sub = await safe(() => prisma.subscriber.findUnique({ where: { token: params.token }, select: { email: true, unsubscribedAt: true } }), null);
   const gone = !!sub?.unsubscribedAt;
 

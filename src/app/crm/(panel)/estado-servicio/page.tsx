@@ -16,7 +16,8 @@ const FILTERS: { value: '' | ServiceState; label: string }[] = [
   { value: 'RESUELTO', label: 'Resueltos' },
 ];
 
-export default async function ServiceStatusPage({ searchParams }: { searchParams: { status?: string } }) {
+export default async function ServiceStatusPage(props: { searchParams: Promise<{ status?: string }> }) {
+  const searchParams = await props.searchParams;
   const status = FILTERS.some((f) => f.value === searchParams.status && f.value) ? (searchParams.status as ServiceState) : undefined;
   const items = await prisma.serviceStatus.findMany({ where: status ? { status } : undefined, orderBy: { startsAt: 'desc' } });
   const rank = { EN_CURSO: 0, PROGRAMADO: 1, RESUELTO: 2 } as const;

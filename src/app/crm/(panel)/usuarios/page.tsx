@@ -13,7 +13,8 @@ const ERRORS: Record<string, string> = {
   lastadmin: 'Tiene que quedar al menos un administrador.',
 };
 
-export default async function UsersPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function UsersPage(props: { searchParams: Promise<{ error?: string }> }) {
+  const searchParams = await props.searchParams;
   const me = await requireAdmin(); // solo visible para rol admin
   const users = await prisma.user.findMany({ orderBy: [{ role: 'asc' }, { email: 'asc' }] });
 

@@ -8,7 +8,8 @@ import { deleteCooperative } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar cooperativa' };
 
-export default async function EditCooperativePage({ params }: { params: { id: string } }) {
+export default async function EditCooperativePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const coop = await prisma.cooperative.findUnique({ where: { id: params.id } });
   if (!coop) notFound();
   return (

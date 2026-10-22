@@ -11,7 +11,8 @@ import { deleteLead, updateLead } from '../actions';
 
 export const metadata: Metadata = { title: 'Detalle de contacto' };
 
-export default async function LeadDetailPage({ params }: { params: { id: string } }) {
+export default async function LeadDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [lead, me] = await Promise.all([prisma.lead.findUnique({ where: { id: params.id } }), getCrmUser()]);
   if (!lead) notFound();
   const type = lead.type as LeadTypeKey;

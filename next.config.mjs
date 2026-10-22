@@ -45,8 +45,32 @@ const LEGACY_FILES = {
 // desarrollo) el sitio se pide a los buscadores que NO lo indexen.
 const allowIndexing = process.env.ALLOW_INDEXING === 'true';
 
+const isHttps = (process.env.NEXT_PUBLIC_SITE_URL ?? '').startsWith('https://');
+
+/**
+ * Content-Security-Policy: le dice al navegador de dónde puede cargar cada cosa. Aunque alguien lograra
+ * inyectar código en una página, el navegador no lo ejecutaría ni enviaría datos a un sitio ajeno.
+ * Solo se permite lo que el sitio usa: sus propios archivos, las imágenes de Supabase Storage y el mapa de Google.
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.supabase.co https://www.google.com https://maps.gstatic.com https://maps.googleapis.com",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "frame-src https://www.google.com https://maps.google.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  ...(isHttps ? ['upgrade-insecure-requests'] : []),
+].join('; ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // El sitio usa <img> comunes, no el optimizador de imágenes de Next (que tuvo varias vulnerabilidades graves): se apaga.
+  images: { unoptimized: true },
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {
@@ -73,6 +97,9 @@ const nextConfig = {
       { key: 'X-Content-Type-Options', value: 'nosniff' },
       { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      { key: 'Content-Security-Policy', value: CSP },
+      { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+      { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()' },
       ...(allowIndexing ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }] : []),
     ];

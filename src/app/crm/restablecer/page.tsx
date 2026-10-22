@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Nueva contraseña', robots: { index:
 export default async function ResetPage() {
   const {
     data: { user },
-  } = await createClient().auth.getUser();
+  } = await (await createClient()).auth.getUser();
 
   return (
     <div className="loginwrap">

@@ -13,6 +13,23 @@ export type UploadKind = keyof typeof RULES;
 
 export class UploadError extends Error {}
 
+/** Los primeros bytes de cada formato. El tipo que informa el navegador se puede falsificar; el contenido real no. */
+function hasValidSignature(buf: Buffer, mime: string): boolean {
+  const starts = (...bytes: number[]) => bytes.every((b, i) => buf[i] === b);
+  switch (mime) {
+    case 'application/pdf':
+      return starts(0x25, 0x50, 0x44, 0x46, 0x2d); // %PDF-
+    case 'image/jpeg':
+      return starts(0xff, 0xd8, 0xff);
+    case 'image/png':
+      return starts(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+    case 'image/webp':
+      return buf.length > 12 && buf.subarray(0, 4).toString('ascii') === 'RIFF' && buf.subarray(8, 12).toString('ascii') === 'WEBP';
+    default:
+      return false;
+  }
+}
+
 /** Sube un archivo al bucket público de Supabase Storage y devuelve su URL pública. */
 export async function uploadPublicFile(file: File, folder: string, kind: UploadKind) {
   const rule = RULES[kind];
@@ -24,6 +41,7 @@ export async function uploadPublicFile(file: File, folder: string, kind: UploadK
   const base = slugify(file.name.replace(/\.[^.]+$/, '')) || 'archivo';
   const path = `${folder}/${Date.now()}-${base}.${ext}`;
   const body = Buffer.from(await file.arrayBuffer());
+  if (!hasValidSignature(body, file.type)) throw new UploadError(`El contenido del archivo no es válido: debe ser ${rule.label}. Probá exportarlo de nuevo.`);
 
   let { error } = await supabase.storage.from(BUCKET).upload(path, body, { contentType: file.type, upsert: false });
   if (error && /not found|bucket/i.test(error.message)) {

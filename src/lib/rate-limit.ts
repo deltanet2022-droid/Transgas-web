@@ -16,7 +16,15 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   return b.count <= limit;
 }
 
+/**
+ * IP del visitante. Detrás de Cloudflare se usa `cf-connecting-ip`, que Cloudflare siempre pisa con la IP real
+ * (el primer valor de X-Forwarded-For lo puede inventar cualquiera y permitiría saltear los límites de intentos).
+ */
+export function ipFromHeaders(h: { get(name: string): string | null }): string {
+  const ip = h.get('cf-connecting-ip') || h.get('x-real-ip') || h.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  return ip.slice(0, 64);
+}
+
 export function clientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for');
-  return (fwd?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown').slice(0, 64);
+  return ipFromHeaders(req.headers);
 }

@@ -9,7 +9,8 @@ import { savePage, resetPage } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar página' };
 
-export default async function EditPageCrm({ params }: { params: { slug: string } }) {
+export default async function EditPageCrm(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const page = await getEffectivePage(params.slug);
   if (!page) notFound();
 

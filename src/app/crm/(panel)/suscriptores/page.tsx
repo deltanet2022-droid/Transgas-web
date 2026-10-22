@@ -7,7 +7,8 @@ import { deleteSubscriber } from './actions';
 
 export const metadata: Metadata = { title: 'Suscriptores' };
 
-export default async function SubscribersPage({ searchParams }: { searchParams: { q?: string } }) {
+export default async function SubscribersPage(props: { searchParams: Promise<{ q?: string }> }) {
+  const searchParams = await props.searchParams;
   const q = (searchParams.q ?? '').trim();
   const [subs, active, pending, gone] = await Promise.all([
     prisma.subscriber.findMany({

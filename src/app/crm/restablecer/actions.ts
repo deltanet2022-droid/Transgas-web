@@ -13,7 +13,7 @@ export async function setNewPassword(_prev: ActionState, fd: FormData): Promise<
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? 'Contraseña inválida.');
   if (password !== confirm) return fail('Las contraseñas no coinciden.');
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

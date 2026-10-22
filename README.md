@@ -2,7 +2,7 @@
 
 Plataforma web de Transgas (cooperativa de gas natural, sur de Córdoba): **sitio público**, **panel de administración (CRM)** en `/crm` y **chatbot flotante** basado en reglas (sin IA).
 
-- **Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL (Supabase) · Supabase Auth + Storage.
+- **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind CSS · Prisma · PostgreSQL (Supabase) · Supabase Auth + Storage.
 - **Hosting de la app:** Hostinger Business → *Node.js App*. Supabase se usa **solo** como base de datos, Auth y Storage.
 - **Identidad visual:** tomada de `transgas-portal-premium-v4-premium.html` (tokens en `tailwind.config.ts` y `src/app/globals.css`).
 
@@ -10,7 +10,7 @@ Plataforma web de Transgas (cooperativa de gas natural, sur de Córdoba): **siti
 
 ## 1. Requisitos
 
-- Node.js **18.18 o superior** (recomendado 20 o 22) y npm.
+- Node.js **20.9 o superior** (recomendado 22; Next 16 no corre en Node 18) y npm.
 - Un proyecto de [Supabase](https://supabase.com) (el plan gratuito alcanza para empezar).
 
 ## 2. Puesta en marcha local
@@ -289,3 +289,13 @@ La guía paso a paso (preparación, cambio de DNS en Cloudflare, variables de en
 `mail.transgas.com.ar` → **no cambiar nameservers ni MX**, solo los registros `A` de `@` y `www`; poner `NEXT_PUBLIC_SITE_URL=https://transgas.com.ar` y
 `ALLOW_INDEXING=true` y volver a desplegar. Los PDF del WordPress viejo están en `public/docs` (página `/documentos`) y sus enlaces antiguos redirigen.
 
+
+## 17. Seguridad (resumen)
+
+- **Next.js 16** (la línea 14 ya no recibe parches). Se compila con `next build --webpack` (script `npm run build`). `next lint` no existe en Next 16: se usa `npm run lint` (ESLint).
+- **Encabezados**: Content-Security-Policy estricta (solo recursos propios, Supabase Storage y el mapa de Google), HSTS (solo con `ALLOW_INDEXING=true`), COOP, Permissions-Policy, `X-Frame-Options`, `nosniff`. Se definen en `next.config.mjs`.
+- **APIs públicas**: tope de tamaño del cuerpo (`src/lib/http.ts`), límite de intentos por IP (`src/lib/rate-limit.ts`, IP real desde `cf-connecting-ip`) y campo trampa (honeypot).
+- **Subidas del CRM**: tipo permitido, tamaño máximo **y** firma real del archivo (PDF/JPG/PNG/WebP) en `src/lib/storage.ts`.
+- **Optimizador de imágenes de Next desactivado** (`images.unoptimized`): el sitio usa `<img>` comunes y así se evita esa superficie de ataque.
+- **Dependencias**: `npm audit --omit=dev` periódicamente. Quedan avisos "moderados" del editor TipTap (solo lo usa el personal del CRM); se resuelven al pasar a TipTap 3.
+- **Acceso al CRM**: Supabase Auth + verificación en 2 pasos (TOTP) opcional, RLS activo en todas las tablas, clave `service_role` solo en el servidor.

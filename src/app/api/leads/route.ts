@@ -1,3 +1,4 @@
+import { readJsonLimited } from '@/lib/http';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
 
   let body: { type?: unknown; values?: unknown; website?: unknown };
   try {
-    body = await req.json();
+    body = (await readJsonLimited(req, 64 * 1024)) as typeof body;
   } catch {
     return NextResponse.json({ ok: false, error: 'Solicitud inválida.' }, { status: 400 });
   }

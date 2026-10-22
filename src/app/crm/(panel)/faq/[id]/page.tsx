@@ -8,7 +8,8 @@ import { deleteFaq } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar pregunta frecuente' };
 
-export default async function EditFaqPage({ params }: { params: { id: string } }) {
+export default async function EditFaqPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [faq, cats] = await Promise.all([
     prisma.faq.findUnique({ where: { id: params.id } }),
     prisma.faq.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } }),

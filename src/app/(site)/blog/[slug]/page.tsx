@@ -10,9 +10,10 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { newsArticle } from '@/lib/schema';
 import { pageMeta } from '@/lib/seo';
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const n = await getPublishedNewsBySlug(params.slug);
   if (!n) return { title: 'Noticia no encontrada', robots: { index: false, follow: false } };
   return pageMeta({
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default async function NewsDetailPage({ params }: Props) {
+export default async function NewsDetailPage(props: Props) {
+  const params = await props.params;
   const n = await getPublishedNewsBySlug(params.slug);
   if (!n) notFound();
   const body = await fillTokens(sanitizeRichText(n.body));

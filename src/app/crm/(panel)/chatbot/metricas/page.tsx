@@ -8,7 +8,8 @@ export const metadata: Metadata = { title: 'Métricas del chatbot' };
 
 const PERIODS = [7, 30, 90] as const;
 
-export default async function ChatMetricsPage({ searchParams }: { searchParams: { d?: string } }) {
+export default async function ChatMetricsPage(props: { searchParams: Promise<{ d?: string }> }) {
+  const searchParams = await props.searchParams;
   const days = PERIODS.find((p) => String(p) === searchParams.d) ?? 30;
   const since = new Date(Date.now() - days * 86_400_000);
 

@@ -5,7 +5,8 @@ import { prisma } from '@/lib/db';
 
 export const metadata: Metadata = { title: 'Nueva pregunta frecuente' };
 
-export default async function NewFaqPage({ searchParams }: { searchParams: { q?: string } }) {
+export default async function NewFaqPage(props: { searchParams: Promise<{ q?: string }> }) {
+  const searchParams = await props.searchParams;
   const prefill = (searchParams.q ?? '').trim().slice(0, 120);
   const categories = (await prisma.faq.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } })).map((c) => c.category);
   return (

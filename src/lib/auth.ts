@@ -15,7 +15,7 @@ const gv = globalThis as unknown as { __verifiedSessions?: Map<string, { at: num
 const verified = (gv.__verifiedSessions ??= new Map());
 
 async function getVerifiedAuthUser(): Promise<{ id: string; email: string } | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   // Solo leemos el token de la cookie; la verificación real es el getUser(token) de más abajo.
   (supabase.auth as unknown as { suppressGetSessionWarning: boolean }).suppressGetSessionWarning = true;
   const {
@@ -61,7 +61,7 @@ export const getCrmUser = cache(async (): Promise<User | null> => {
 
 /** Nivel de verificación de la sesión: aal1 = contraseña; aal2 = contraseña + código de la app autenticadora. */
 export const getAssurance = cache(async () => {
-  const { data } = await createClient().auth.mfa.getAuthenticatorAssuranceLevel();
+  const { data } = await (await createClient()).auth.mfa.getAuthenticatorAssuranceLevel();
   return { current: data?.currentLevel ?? null, next: data?.nextLevel ?? null };
 });
 

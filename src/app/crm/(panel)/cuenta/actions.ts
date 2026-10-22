@@ -24,7 +24,7 @@ export async function changePassword(_prev: ActionState, fd: FormData): Promise<
   const { error: bad } = await probe.auth.signInWithPassword({ email: user.email, password: current });
   if (bad) return fail('La contraseña actual no es correcta.');
 
-  const { error } = await createClient().auth.updateUser({ password });
+  const { error } = await (await createClient()).auth.updateUser({ password });
   if (error) return fail(`No se pudo cambiar la contraseña: ${error.message}`);
   return success('Contraseña actualizada.');
 }
@@ -40,7 +40,7 @@ export interface EnrollResult {
 /** Paso 1 del alta de 2FA: genera el QR y el código secreto. */
 export async function startMfaEnroll(): Promise<EnrollResult> {
   const user = await requireUser();
-  const supabase = createClient();
+  const supabase = await createClient();
   // Si quedó un intento a medias, se descarta para poder empezar de nuevo.
   const { data: existing } = await supabase.auth.mfa.listFactors();
   for (const f of existing?.all ?? []) if (f.status === 'unverified') await supabase.auth.mfa.unenroll({ factorId: f.id });
@@ -58,7 +58,7 @@ export async function confirmMfaEnroll(_prev: ActionState, fd: FormData): Promis
   if (!factorId || !/^\d{6}$/.test(code)) return fail('Ingresá el código de 6 dígitos.');
   if (!rateLimit(`mfaenroll:${user.id}`, 8, 15 * 60_000)) return fail('Demasiados intentos. Esperá unos minutos.');
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: ch, error: cErr } = await supabase.auth.mfa.challenge({ factorId });
   if (cErr || !ch) return fail('No se pudo verificar. Empezá de nuevo.');
   const { error } = await supabase.auth.mfa.verify({ factorId, challengeId: ch.id, code });
@@ -69,7 +69,7 @@ export async function confirmMfaEnroll(_prev: ActionState, fd: FormData): Promis
 
 export async function disableMfa(): Promise<ActionState> {
   await requireUser(); // la sesión ya está en nivel aal2 (se pidió el código al ingresar)
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase.auth.mfa.listFactors();
   for (const f of data?.all ?? []) {
     const { error } = await supabase.auth.mfa.unenroll({ factorId: f.id });

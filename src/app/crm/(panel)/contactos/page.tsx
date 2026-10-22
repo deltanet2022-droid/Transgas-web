@@ -10,7 +10,10 @@ export const metadata: Metadata = { title: 'Contactos' };
 
 const PAGE_SIZE = 25;
 
-export default async function LeadsPage({ searchParams }: { searchParams: { type?: string; status?: string; q?: string; page?: string } }) {
+export default async function LeadsPage(
+  props: { searchParams: Promise<{ type?: string; status?: string; q?: string; page?: string }> }
+) {
+  const searchParams = await props.searchParams;
   const where = leadWhere(searchParams);
   const page = Math.max(1, Number.parseInt(searchParams.page ?? '1', 10) || 1);
 

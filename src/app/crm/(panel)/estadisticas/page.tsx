@@ -9,7 +9,8 @@ export const metadata: Metadata = { title: 'Estadísticas de visitas' };
 const PERIODS = [7, 30, 90] as const;
 const DEVICE_LABEL: Record<string, string> = { desktop: 'Computadora', mobile: 'Celular', tablet: 'Tablet' };
 
-export default async function StatsPage({ searchParams }: { searchParams: { d?: string } }) {
+export default async function StatsPage(props: { searchParams: Promise<{ d?: string }> }) {
+  const searchParams = await props.searchParams;
   const days = PERIODS.find((p) => String(p) === searchParams.d) ?? 30;
   const since = new Date(Date.now() - days * 86_400_000);
 

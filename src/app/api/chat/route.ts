@@ -1,3 +1,4 @@
+import { readJsonLimited } from '@/lib/http';
 import { NextResponse } from 'next/server';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
 
   let body: { conversationId?: unknown; message?: unknown };
   try {
-    body = await req.json();
+    body = (await readJsonLimited(req, 16 * 1024)) as typeof body;
   } catch {
     return NextResponse.json({ ok: false, error: 'Solicitud inválida.' }, { status: 400 });
   }

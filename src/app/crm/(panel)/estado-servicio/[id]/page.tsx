@@ -8,7 +8,8 @@ import { deleteServiceStatus } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar aviso' };
 
-export default async function EditServiceStatusPage({ params }: { params: { id: string } }) {
+export default async function EditServiceStatusPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const item = await prisma.serviceStatus.findUnique({ where: { id: params.id } });
   if (!item) notFound();
   return (

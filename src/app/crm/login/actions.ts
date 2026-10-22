@@ -15,12 +15,12 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
   if (!email || !password) return fail('Ingresá tu email y tu contraseña.');
 
   // Freno básico a la fuerza bruta (por IP y por email).
-  const ip = clientIpFromHeaders();
+  const ip = await clientIpFromHeaders();
   if (!rateLimit(`login:ip:${ip}`, 20, 15 * 60_000) || !rateLimit(`login:email:${email}`, 8, 15 * 60_000)) {
     return fail('Demasiados intentos. Esperá unos minutos y volvé a probar.');
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return fail('Email o contraseña incorrectos.');
 
@@ -37,7 +37,7 @@ export async function signIn(_prev: ActionState, fd: FormData): Promise<ActionSt
 }
 
 export async function signOut() {
-  await createClient().auth.signOut();
+  await (await createClient()).auth.signOut();
   forgetVerifiedSessions();
   redirect('/crm/login');
 }
@@ -46,14 +46,14 @@ export async function signOut() {
 export async function requestPasswordReset(_prev: ActionState, fd: FormData): Promise<ActionState> {
   const email = formString(fd, 'email').toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail('Ingresá un correo válido.');
-  if (!rateLimit(`reset:ip:${clientIpFromHeaders()}`, 5, 60 * 60_000) || !rateLimit(`reset:email:${email}`, 3, 60 * 60_000)) {
+  if (!rateLimit(`reset:ip:${await clientIpFromHeaders()}`, 5, 60 * 60_000) || !rateLimit(`reset:email:${email}`, 3, 60 * 60_000)) {
     return fail('Demasiados pedidos. Probá de nuevo en un rato.');
   }
 
   // Solo se manda el mail si es un usuario del CRM (evita usar el servicio para mandar mails a cualquiera).
   const crmUser = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (crmUser) {
-    const { error } = await createClient().auth.resetPasswordForEmail(email, { redirectTo: `${site.url}/crm/auth/callback?next=/crm/restablecer` });
+    const { error } = await (await createClient()).auth.resetPasswordForEmail(email, { redirectTo: `${site.url}/crm/auth/callback?next=/crm/restablecer` });
     if (error) console.error('[auth] resetPasswordForEmail:', error.message);
   }
   return success('Si el correo corresponde a un usuario del CRM, te enviamos un mensaje con el enlace para elegir una contraseña nueva. Abrilo desde este mismo navegador.');

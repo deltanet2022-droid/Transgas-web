@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: 'Mi cuenta' };
 
 export default async function AccountPage() {
   const user = await requireUser();
-  const { data } = await createClient().auth.mfa.listFactors();
+  const { data } = await (await createClient()).auth.mfa.listFactors();
   const mfaEnabled = !!data?.totp?.some((f) => f.status === 'verified');
 
   return (

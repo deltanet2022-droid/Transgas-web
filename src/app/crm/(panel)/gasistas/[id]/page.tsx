@@ -8,7 +8,8 @@ import { deleteInstaller } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar gasista' };
 
-export default async function EditInstallerPage({ params }: { params: { id: string } }) {
+export default async function EditInstallerPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const installer = await prisma.licensedInstaller.findUnique({ where: { id: params.id } });
   if (!installer) notFound();
   return (

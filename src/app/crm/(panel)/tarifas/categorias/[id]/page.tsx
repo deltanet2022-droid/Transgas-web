@@ -8,7 +8,8 @@ import { deleteTariff } from '../../actions';
 
 export const metadata: Metadata = { title: 'Editar categoría' };
 
-export default async function EditTariffPage({ params }: { params: { id: string } }) {
+export default async function EditTariffPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const tariff = await prisma.tariff.findUnique({ where: { id: params.id } });
   if (!tariff) notFound();
   return (

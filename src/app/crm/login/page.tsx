@@ -5,7 +5,8 @@ import { signIn } from './actions';
 
 export const metadata: Metadata = { title: 'Ingresar al CRM', robots: { index: false, follow: false } };
 
-export default function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function LoginPage(props: { searchParams: Promise<{ error?: string }> }) {
+  const searchParams = await props.searchParams;
   return (
     <div className="loginwrap">
       <div className="logincard">

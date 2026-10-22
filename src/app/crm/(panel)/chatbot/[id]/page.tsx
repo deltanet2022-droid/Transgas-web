@@ -18,7 +18,8 @@ const KIND_LABEL: Record<string, string> = {
   error: 'Error del motor',
 };
 
-export default async function ChatDetailPage({ params }: { params: { id: string } }) {
+export default async function ChatDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const [conv, me] = await Promise.all([prisma.chatConversation.findUnique({ where: { id: params.id }, include: { messages: { orderBy: { createdAt: 'asc' } } } }), getCrmUser()]);
   if (!conv) notFound();
 

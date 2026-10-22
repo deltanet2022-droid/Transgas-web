@@ -16,7 +16,8 @@ const FILTERS = [
   { value: 'none', label: 'Sin respuesta' },
 ];
 
-export default async function ChatHistoryPage({ searchParams }: { searchParams: { f?: string; page?: string } }) {
+export default async function ChatHistoryPage(props: { searchParams: Promise<{ f?: string; page?: string }> }) {
+  const searchParams = await props.searchParams;
   const f = searchParams.f ?? '';
   const where: Prisma.ChatConversationWhereInput =
     f === 'faq' ? { matchedFaq: true } : f === 'whatsapp' ? { whatsappHandoff: true } : f === 'emergency' ? { emergency: true } : f === 'none' ? { matchedFaq: false, whatsappHandoff: false, emergency: false } : {};

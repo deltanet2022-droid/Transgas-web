@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   const safeNext = next.startsWith('/crm') && !next.startsWith('//') ? next : '/crm';
 
   if (code) {
-    const { error } = await createClient().auth.exchangeCodeForSession(code);
+    const { error } = await (await createClient()).auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(new URL(safeNext, site.url));
   }
   return NextResponse.redirect(new URL('/crm/login?error=link', site.url));

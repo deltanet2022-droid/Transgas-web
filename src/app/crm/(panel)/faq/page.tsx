@@ -7,7 +7,8 @@ import { toggleFaq } from './actions';
 
 export const metadata: Metadata = { title: 'Preguntas frecuentes' };
 
-export default async function FaqCrmPage({ searchParams }: { searchParams: { q?: string; category?: string } }) {
+export default async function FaqCrmPage(props: { searchParams: Promise<{ q?: string; category?: string }> }) {
+  const searchParams = await props.searchParams;
   const q = (searchParams.q ?? '').trim();
   const category = (searchParams.category ?? '').trim();
 

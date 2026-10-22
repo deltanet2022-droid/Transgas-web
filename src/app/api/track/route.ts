@@ -1,3 +1,4 @@
+import { readJsonLimited } from '@/lib/http';
 import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
 
   let body: { path?: unknown; referrer?: unknown };
   try {
-    body = await req.json();
+    body = (await readJsonLimited(req, 4 * 1024)) as typeof body;
   } catch {
     return empty();
   }

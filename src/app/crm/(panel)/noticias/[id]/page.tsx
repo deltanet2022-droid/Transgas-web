@@ -9,7 +9,8 @@ import { deleteNews } from '../actions';
 
 export const metadata: Metadata = { title: 'Editar noticia' };
 
-export default async function EditNewsPage({ params }: { params: { id: string } }) {
+export default async function EditNewsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const news = await prisma.news.findUnique({ where: { id: params.id } });
   if (!news) notFound();
   return (

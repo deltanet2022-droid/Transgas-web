@@ -8,7 +8,7 @@ import { verifyMfa } from './actions';
 export const metadata: Metadata = { title: 'Verificación en dos pasos', robots: { index: false, follow: false } };
 
 export default async function VerifyPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

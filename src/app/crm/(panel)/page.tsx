@@ -4,7 +4,8 @@ import { prisma } from '@/lib/db';
 import { formatDateOnly, formatDateTime, formatDateLong, todayAR } from '@/lib/dates';
 import { LEAD_TYPE_LABEL, type LeadTypeKey } from '@/lib/leads/config';
 
-export default async function CrmDashboard({ searchParams }: { searchParams: { forbidden?: string } }) {
+export default async function CrmDashboard(props: { searchParams: Promise<{ forbidden?: string }> }) {
+  const searchParams = await props.searchParams;
   const today = todayAR();
   const now = new Date();
 
