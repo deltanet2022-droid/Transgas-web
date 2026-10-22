@@ -297,5 +297,5 @@ La guía paso a paso (preparación, cambio de DNS en Cloudflare, variables de en
 - **APIs públicas**: tope de tamaño del cuerpo (`src/lib/http.ts`), límite de intentos por IP (`src/lib/rate-limit.ts`, IP real desde `cf-connecting-ip`) y campo trampa (honeypot).
 - **Subidas del CRM**: tipo permitido, tamaño máximo **y** firma real del archivo (PDF/JPG/PNG/WebP) en `src/lib/storage.ts`.
 - **Optimizador de imágenes de Next desactivado** (`images.unoptimized`): el sitio usa `<img>` comunes y así se evita esa superficie de ataque.
-- **Dependencias**: `npm audit --omit=dev` periódicamente. Quedan avisos "moderados" del editor TipTap (solo lo usa el personal del CRM); se resuelven al pasar a TipTap 3.
+- **Dependencias**: `npm audit --omit=dev` periódicamente. Editor TipTap 3 y ESLint 9. El único aviso que queda es `braces` (vía Tailwind 3, solo herramientas de compilación): no tiene versión corregida publicada.
 - **Acceso al CRM**: Supabase Auth + verificación en 2 pasos (TOTP) opcional, RLS activo en todas las tablas, clave `service_role` solo en el servidor.

@@ -2,7 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
 import { useState } from 'react';
 
 /** Editor de texto enriquecido simple (negrita, títulos, listas, citas, enlaces). Guarda HTML en un input oculto. */
@@ -10,8 +9,15 @@ export function RichTextEditor({ name, initialHtml = '' }: { name: string; initi
   const [html, setHtml] = useState(initialHtml);
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: { levels: [2, 3] }, codeBlock: false, code: false, strike: false }),
-      Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
+      // En TipTap 3 el enlace viene dentro del StarterKit; el subrayado se deja afuera (no está en la botonera).
+      StarterKit.configure({
+        heading: { levels: [2, 3] },
+        codeBlock: false,
+        code: false,
+        strike: false,
+        underline: false,
+        link: { openOnClick: false, autolink: true, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } },
+      }),
     ],
     content: initialHtml,
     immediatelyRender: false,
