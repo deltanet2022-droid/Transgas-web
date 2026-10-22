@@ -113,8 +113,8 @@ export default async function SettingsPage() {
             </Field>
           </div>
           <div className="row">
-            <Field label="Usuario (correo completo)" htmlFor="smtpUser">
-              <input id="smtpUser" name="smtpUser" type="email" required maxLength={160} defaultValue={smtp.user} placeholder="no-responder@transgas.com.ar" autoComplete="off" />
+            <Field label="Usuario" htmlFor="smtpUser" help="Normalmente el correo completo de la casilla. En servicios de envío (Brevo, Resend…) es el usuario que indica el servicio.">
+              <input id="smtpUser" name="smtpUser" type="text" required maxLength={160} defaultValue={smtp.user} placeholder="no-responder@transgas.com.ar" autoComplete="off" />
             </Field>
             <Field
               label="Contraseña de la casilla"

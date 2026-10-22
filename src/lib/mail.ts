@@ -38,7 +38,7 @@ export interface MailInput {
   headers?: Record<string, string>;
 }
 
-export type MailResult = { ok: true } | { ok: false; reason: 'not_configured' | 'error'; message?: string };
+export type MailResult = { ok: true } | { ok: false; reason: 'not_configured' | 'error'; message?: string; code?: string };
 
 export async function sendMail(input: MailInput): Promise<MailResult> {
   const config = await getSmtpConfig();
@@ -55,9 +55,33 @@ export async function sendMail(input: MailInput): Promise<MailResult> {
     return { ok: true };
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    console.error('[mail] no se pudo enviar:', message);
-    return { ok: false, reason: 'error', message };
+    const code = (e as { code?: string })?.code;
+    console.error('[mail] no se pudo enviar:', code, message);
+    return { ok: false, reason: 'error', message, code };
   }
+}
+
+/** Traduce el error técnico del servidor de correo a una explicación y un consejo en castellano. */
+export function explainMailError(message = '', code = ''): string {
+  const m = message.toLowerCase();
+  const c = code.toUpperCase();
+  let hint: string;
+  if (c === 'EAUTH' || /invalid login|authentication|username and password not accepted|application-specific password|535|534|5\.7\.8|5\.7\.9/.test(m)) {
+    hint =
+      'El servidor rechazó el usuario o la contraseña. Si es Gmail: hay que tener activada la verificación en dos pasos y usar una «contraseña de aplicación» de 16 letras (no la contraseña normal), y el usuario es la dirección completa de Gmail.';
+  } else if (c === 'ENOTFOUND' || c === 'EDNS' || /getaddrinfo/.test(m)) {
+    hint = 'El nombre del servidor no existe. Revisá que esté bien escrito (por ejemplo smtp.gmail.com).';
+  } else if (c === 'ETIMEDOUT' || c === 'ECONNREFUSED' || c === 'ENETUNREACH' || c === 'EHOSTUNREACH' || /timed? ?out|timeout/.test(m)) {
+    hint =
+      'No se pudo conectar con el servidor de correo (no respondió a tiempo). Probá con el otro puerto (465 ↔ 587). Si sigue igual, puede que el hosting esté bloqueando las conexiones de salida de correo: consultale a Hostinger si permite SMTP externo desde la app.';
+  } else if (c === 'ECONNRESET' || c === 'ESOCKET' || /wrong version number|tls|ssl|socket|econnreset/.test(m)) {
+    hint = 'El servidor cortó la conexión segura. Probá con el otro puerto (465 ↔ 587); si no funciona, el servidor de correo tiene mal configurado el cifrado (TLS).';
+  } else if (c === 'EENVELOPE' || /relay|recipient|rejected|550|553|554/.test(m)) {
+    hint = 'El servidor aceptó la conexión pero rechazó el mensaje (remitente o destinatario no permitido). Revisá que el «Remitente» coincida con la casilla del usuario.';
+  } else {
+    hint = 'No se pudo enviar. Revisá servidor, puerto, usuario y contraseña.';
+  }
+  return `${hint} (Detalle técnico: ${code ? code + ' · ' : ''}${message.slice(0, 160)})`;
 }
 
 export const escapeHtml = (s: unknown): string =>

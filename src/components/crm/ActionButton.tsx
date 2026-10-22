@@ -27,13 +27,29 @@ export function ActionButton({
         disabled={pending}
         onClick={() => {
           if (confirm && !window.confirm(confirm)) return;
-          start(async () => setState(await action()));
+          setState(null);
+          start(async () => {
+            try {
+              setState(await action());
+            } catch {
+              // Si el servidor falla o tarda demasiado, igual se avisa en pantalla (antes no se veía nada).
+              setState({ error: 'No se pudo completar la acción: el servidor no respondió o devolvió un error. Probá de nuevo en unos minutos.' });
+            }
+          });
         }}
       >
         {pending ? pendingLabel : label}
       </button>
-      {state?.error && <div className="cmsg err">{state.error}</div>}
-      {state?.ok && <div className="cmsg ok">{state.message}</div>}
+      {state?.error && (
+        <div className="cmsg err" role="alert">
+          ✖ {state.error}
+        </div>
+      )}
+      {state?.ok && (
+        <div className="cmsg ok" role="status">
+          ✔ {state.message}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth';
-import { escapeHtml, layoutEmail, mailConfigured, sendMail } from '@/lib/mail';
+import { escapeHtml, explainMailError, layoutEmail, mailConfigured, sendMail } from '@/lib/mail';
 import { getSettings, invalidateSettingsCache, saveSettings, type SiteSettings } from '@/lib/settings';
 import { getSmtpSummary, saveSmtp } from '@/lib/smtp';
 import { parseDateOnly } from '@/lib/dates';
@@ -74,7 +74,8 @@ const smtpSchema = z.object({
     .max(120)
     .regex(/^[a-z0-9.-]+$/i, 'El servidor solo puede tener letras, números, puntos y guiones (sin https://).'),
   port: z.coerce.number().int().refine((p) => p === 465 || p === 587, 'El puerto tiene que ser 465 (SSL) o 587.'),
-  user: z.string().email('El usuario es el correo completo de la casilla (ej. no-responder@transgas.com.ar).').max(160),
+  // Casilla de correo (correo completo) o, en servicios de envío como Brevo/Resend, el usuario que indique el servicio.
+  user: z.string().min(3, 'Ingresá el usuario del servidor de correo.').max(160).regex(/^\S+$/, 'El usuario no puede tener espacios.'),
   from: z.string().max(200),
   pass: z.string().max(200),
 });
@@ -91,6 +92,7 @@ export async function saveSmtpSettings(_prev: ActionState, fd: FormData): Promis
   });
   if (!parsed.success) return fail(firstZodError(parsed.error));
   const d = parsed.data;
+  if (!d.from && !d.user.includes('@')) return fail('Completá el campo «Remitente» (por ejemplo: Transgas <no-responder@transgas.com.ar>): el usuario de este servicio no es un correo.');
   const previous = await getSmtpSummary();
   const hasStoredPass = previous.source === 'crm';
   if (!d.pass && !hasStoredPass) return fail('Ingresá la contraseña de la casilla de correo.');
@@ -111,10 +113,16 @@ export async function sendTestEmail(): Promise<ActionState> {
   const s = await getSettings();
   if (!(await mailConfigured())) return fail('Todavía no se configuró el servidor de correo. Completá y guardá el formulario "Servidor de correo" de esta página.');
   if (!s.notifyEmails.length) return fail('Primero guardá al menos un correo de aviso.');
-  const res = await sendMail({
+  // Tope de 30 segundos: si el servidor de correo no contesta, se muestra el motivo en vez de quedar colgado.
+  const timeout = new Promise<{ ok: false; reason: 'error'; code: string; message: string }>((resolve) =>
+    setTimeout(() => resolve({ ok: false, reason: 'error', code: 'ETIMEDOUT', message: 'timeout: el servidor de correo no respondió en 30 segundos' }), 30_000),
+  );
+  const res = await Promise.race([timeout, sendMail({
     to: s.notifyEmails,
     subject: 'Prueba de avisos — Transgas',
     html: layoutEmail('Prueba de avisos', `<p>Si recibiste este mensaje, los avisos por mail del sitio de Transgas funcionan.</p><p style="color:#607387;font-size:13px">Destinatarios configurados: ${escapeHtml(s.notifyEmails.join(', '))}</p>`),
-  });
-  return res.ok ? success(`Mail de prueba enviado a ${s.notifyEmails.join(', ')}.`) : fail(`No se pudo enviar: ${res.reason === 'error' ? res.message : 'servidor de correo sin configurar'}`);
+  })]);
+  return res.ok
+    ? success(`Mail de prueba enviado a ${s.notifyEmails.join(', ')}. Si no lo ves en unos minutos, revisá la carpeta de spam.`)
+    : fail(res.reason === 'error' ? `No se pudo enviar. ${explainMailError(res.message, res.code)}` : 'Todavía no se configuró el servidor de correo.');
 }
