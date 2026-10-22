@@ -35,6 +35,7 @@ Si hay olor a gas: no encender fuego ni accionar interruptores, ventilar, cerrar
 ## Páginas principales
 ${[
   '/preguntas-frecuentes',
+  '/documentos',
   '/tarifas',
   '/tarifas/categorias',
   '/tarifas/tarifa-social',

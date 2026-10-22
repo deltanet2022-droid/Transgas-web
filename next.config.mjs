@@ -22,6 +22,25 @@ const LEGACY_REDIRECTS = {
   '/nuevo-servicio': '/autogestion/nuevo-servicio',
 };
 
+/**
+ * Archivos que estaban en el WordPress viejo (wp-content/uploads) y ahora viven en /public/docs.
+ * Si alguien (o Google) todavía tiene el enlace viejo, sigue funcionando.
+ */
+const LEGACY_FILES = {
+  '/wp-content/uploads/2023/08/reglamento-servicio-distribucion-2021_compressed.pdf': '/docs/reglamento-servicio-distribucion-2021.pdf',
+  '/wp-content/uploads/2023/08/Manual_de_Emergencias_Res_I-2796_Transgas.pdf': '/docs/manual-de-emergencias-res-i-2796.pdf',
+  '/wp-content/uploads/2023/08/Instructivo_CoopOnline-comprimido.pdf': '/docs/instructivo-cooponline.pdf',
+  '/wp-content/uploads/2023/08/pago-gas-transgas-convertido.pdf': '/docs/instructivo-adhesion-y-pago-de-facturas.pdf',
+  '/wp-content/uploads/2026/01/Cuadro-Tarifario-Transgas-Enero-2026.pdf': '/docs/cuadro-tarifario-transgas-enero-2026.pdf',
+  '/wp-content/uploads/2025/08/Cuadro-Tarifario-Transgas-01-08-2025.pdf': '/docs/cuadro-tarifario-transgas-agosto-2025.pdf',
+  '/wp-content/uploads/2025/06/Cuadro-Tarifario-Res-364.pdf': '/docs/cuadro-tarifario-res-364-junio-2025.pdf',
+  '/wp-content/uploads/2025/05/Cuadro-Tarifario-Res-260-25.pdf': '/docs/cuadro-tarifario-res-260-25-mayo-2025.pdf',
+  // Mapas del sitio que generaba WordPress: Google los pide por costumbre; ahora el mapa es /sitemap.xml
+  '/wp-sitemap.xml': '/sitemap.xml',
+  '/sitemap_index.xml': '/sitemap.xml',
+  '/page-sitemap.xml': '/sitemap.xml',
+};
+
 // Solo se indexa en Google si ALLOW_INDEXING=true (producción). Por defecto (dominio de prueba,
 // desarrollo) el sitio se pide a los buscadores que NO lo indexen.
 const allowIndexing = process.env.ALLOW_INDEXING === 'true';
@@ -42,7 +61,12 @@ const nextConfig = {
   // Más tiempo por página al generar el sitio (el servidor compartido puede ser lento).
   staticPageGenerationTimeout: 180,
   async redirects() {
-    return Object.entries(LEGACY_REDIRECTS).map(([source, destination]) => ({ source, destination, permanent: true }));
+    const legacy = Object.entries({ ...LEGACY_REDIRECTS, ...LEGACY_FILES }).map(([source, destination]) => ({ source, destination, permanent: true }));
+    return [
+      // www.transgas.com.ar → transgas.com.ar (una sola dirección para Google; evita contenido duplicado)
+      { source: '/:path*', has: [{ type: 'host', value: 'www.transgas.com.ar' }], destination: 'https://transgas.com.ar/:path*', permanent: true },
+      ...legacy,
+    ];
   },
   async headers() {
     const common = [
@@ -61,7 +85,8 @@ const nextConfig = {
       },
       // Páginas públicas: sin "no-store" para que el botón «atrás» del navegador las recupere al instante (bfcache).
       // "no-cache" = siempre se revalida con el servidor, así que nunca se ve información vieja.
-      { source: '/((?!_next/|fonts/|images/|news/|brand/|api/|crm).*)', headers: longCache('private, no-cache, max-age=0, must-revalidate') },
+      { source: '/((?!_next/|fonts/|images/|news/|brand/|docs/|api/|crm).*)', headers: longCache('private, no-cache, max-age=0, must-revalidate') },
+      { source: '/docs/:path*', headers: longCache('public, max-age=86400, stale-while-revalidate=604800') },
       { source: '/fonts/:path*', headers: longCache('public, max-age=31536000, immutable') },
       { source: '/images/:path*', headers: longCache('public, max-age=604800, stale-while-revalidate=86400') },
       { source: '/news/:path*', headers: longCache('public, max-age=604800, stale-while-revalidate=86400') },

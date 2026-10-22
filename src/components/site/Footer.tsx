@@ -44,6 +44,7 @@ export async function Footer() {
           <Link href="/usuarios/derechos">Derechos de usuarios</Link>
           <Link href="/avisos">Avisos de vencimiento</Link>
           <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>
+          <Link href="/documentos">Documentos y manuales</Link>
           <Link href="/privacidad">Política de privacidad</Link>
         </div>
         <div className="foot">
@@ -53,7 +54,7 @@ export async function Footer() {
           <Link href="/cooperativas">Cooperativas</Link>
           <Link href="/blog">Novedades</Link>
           <a
-            href="https://transgas.com.ar/wp-content/uploads/2023/08/reglamento-servicio-distribucion-2021_compressed.pdf"
+            href="/docs/reglamento-servicio-distribucion-2021.pdf"
             target="_blank"
             rel="noopener"
           >

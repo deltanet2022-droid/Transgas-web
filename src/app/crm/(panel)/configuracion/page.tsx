@@ -96,9 +96,9 @@ export default async function SettingsPage() {
           )}
         </h2>
         <p className="help" style={{ marginBottom: 12 }}>
-          Es la casilla desde la que el sitio envía los mails (avisos al equipo y avisos de vencimiento a los suscriptores). Si usás el correo de Hostinger:
-          hPanel → <em>Correos electrónicos</em> → creá una casilla (por ejemplo <b>no-responder@transgas.com.ar</b>). El servidor suele ser{' '}
-          <b>smtp.hostinger.com</b>, puerto <b>465</b>. La contraseña se guarda cifrada y no se vuelve a mostrar.
+          Es la casilla desde la que el sitio envía los mails (avisos al equipo y avisos de vencimiento a los suscriptores). Usá el servidor de correo donde
+          está alojado el correo del dominio (para Transgas: <b>mail.transgas.com.ar</b>, puerto <b>465</b>) y una casilla como <b>no-responder@transgas.com.ar</b>,
+          que tiene que existir en ese servidor. La contraseña se guarda cifrada y no se vuelve a mostrar.
         </p>
         <ActionForm action={saveSmtpSettings} submitLabel="Guardar servidor de correo">
           <div className="row">

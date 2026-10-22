@@ -89,12 +89,12 @@ async function seedTariffs() {
     await prisma.tariffDocument.create({
       data: {
         title,
-        fileUrl: 'https://transgas.com.ar/wp-content/uploads/2026/01/Cuadro-Tarifario-Transgas-Enero-2026.pdf',
+        fileUrl: '/docs/cuadro-tarifario-transgas-enero-2026.pdf',
         validFrom: new Date('2026-01-01T00:00:00.000Z'),
         isCurrent: true,
       },
     });
-    console.log('· Tarifas: PDF vigente cargado (enlace al sitio actual de Transgas).');
+    console.log('· Tarifas: PDF vigente cargado.');
   }
 }
 

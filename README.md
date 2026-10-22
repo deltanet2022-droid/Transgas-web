@@ -281,3 +281,11 @@ El sitio corre en un hosting compartido con pocos hilos y poca memoria. Un deplo
 - Las páginas no deben consultar la base al compilar (hoy se arman en cada visita y se guardan unos segundos en memoria).
 - Si el error vuelve: agregar la variable de entorno `TOKIO_WORKER_THREADS=1` en hPanel y redesplegar.
 - Linux distingue mayúsculas en nombres de archivo: cuidar que imports y rutas de `public/` coincidan exactamente.
+
+## 16. Pasar al dominio definitivo (transgas.com.ar)
+
+La guía paso a paso (preparación, cambio de DNS en Cloudflare, variables de entorno, correo, Google, vuelta atrás) está en
+[`docs/Guia-de-migracion-a-transgas.com.ar.md`](docs/Guia-de-migracion-a-transgas.com.ar.md). Resumen: el DNS está en Cloudflare y el correo en
+`mail.transgas.com.ar` → **no cambiar nameservers ni MX**, solo los registros `A` de `@` y `www`; poner `NEXT_PUBLIC_SITE_URL=https://transgas.com.ar` y
+`ALLOW_INDEXING=true` y volver a desplegar. Los PDF del WordPress viejo están en `public/docs` (página `/documentos`) y sus enlaces antiguos redirigen.
+

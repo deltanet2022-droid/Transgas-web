@@ -136,7 +136,7 @@ export const PAGE_DEFS: PageDef[] = [
 <h2>Cómo presentar un reclamo</h2>
 <ol><li><strong>Contactanos</strong><br>Escribinos desde <a href="/contacto">el formulario de contacto</a> o llamá al {{telefono}} ({{horario}}).</li><li><strong>Detallá tu caso</strong><br>Indicá tu número de cliente, el motivo del reclamo y, si podés, adjuntá los datos de la factura o del hecho.</li><li><strong>Conservá tu número de consulta</strong><br>Te lo damos al enviar el formulario; sirve para hacer el seguimiento.</li></ol>
 <h2>Reglamento del servicio</h2>
-<p>El <a href="https://transgas.com.ar/wp-content/uploads/2023/08/reglamento-servicio-distribucion-2021_compressed.pdf">reglamento de servicio de distribución</a> establece las condiciones generales del servicio.</p>`,
+<p>El <a href="/docs/reglamento-servicio-distribucion-2021.pdf">reglamento de servicio de distribución</a> establece las condiciones generales del servicio.</p>`,
   },
   {
     slug: 'uso-eficiente',

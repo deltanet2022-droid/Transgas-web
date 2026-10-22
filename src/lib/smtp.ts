@@ -134,7 +134,7 @@ export async function getSmtpSummary(): Promise<SmtpSummary> {
   return {
     configured: !!value,
     source,
-    host: value?.host ?? stored?.host ?? 'smtp.hostinger.com',
+    host: value?.host ?? stored?.host ?? 'mail.transgas.com.ar',
     port: value?.port ?? stored?.port ?? 465,
     user: value?.user ?? stored?.user ?? '',
     from: value?.from ?? stored?.from ?? '',

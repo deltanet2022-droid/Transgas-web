@@ -309,7 +309,7 @@ export function ProfessionalsDocs() {
             <h3>Contratistas y reglamentación</h3>
             <p>Accesos institucionales para contratistas, reglamento y documentación de servicio.</p>
             <a
-              href="https://transgas.com.ar/wp-content/uploads/2023/08/reglamento-servicio-distribucion-2021_compressed.pdf"
+              href="/docs/reglamento-servicio-distribucion-2021.pdf"
               target="_blank"
               rel="noopener"
             >

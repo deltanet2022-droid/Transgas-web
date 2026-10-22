@@ -12,6 +12,7 @@ const PAGES: { path: string; priority: number; freq: MetadataRoute.Sitemap[numbe
   { path: '/tarifas/tarifa-social', priority: 0.7, freq: 'monthly' },
   { path: '/tarifas/zona-fria', priority: 0.6, freq: 'yearly' },
   { path: '/preguntas-frecuentes', priority: 0.9, freq: 'monthly' },
+  { path: '/documentos', priority: 0.7, freq: 'monthly' },
   { path: '/ayuda/entender-tu-factura', priority: 0.8, freq: 'yearly' },
   { path: '/ayuda/inquilinos', priority: 0.6, freq: 'yearly' },
   { path: '/seguridad', priority: 0.9, freq: 'monthly' },

@@ -70,7 +70,7 @@ export async function saveSiteSettings(_prev: ActionState, fd: FormData): Promis
 const smtpSchema = z.object({
   host: z
     .string()
-    .min(3, 'Ingresá el servidor de salida (ej. smtp.hostinger.com).')
+    .min(3, 'Ingresá el servidor de salida (ej. mail.transgas.com.ar).')
     .max(120)
     .regex(/^[a-z0-9.-]+$/i, 'El servidor solo puede tener letras, números, puntos y guiones (sin https://).'),
   port: z.coerce.number().int().refine((p) => p === 465 || p === 587, 'El puerto tiene que ser 465 (SSL) o 587.'),

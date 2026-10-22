@@ -294,3 +294,15 @@ picture { display: contents; }
 /* El botón flotante del chat no debe tapar el texto de la barra inferior */
 .footbottom { padding-right: 100px; }
 @media (max-width: 760px) { .footbottom { padding-right: 0; padding-bottom: 88px; } }
+
+/* ───── Documentos descargables ───── */
+.docgroup h2 { font-size: 1.3rem; margin-bottom: 4px; }
+.docintro { color: var(--muted); font-size: .88rem; margin-bottom: 12px; }
+.doclist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.doclist a { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; transition: border-color .2s, transform .2s; }
+.doclist a:hover { border-color: #acd1e6; transform: translateY(-2px); }
+.docico { flex: none; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: #fdecea; color: #b3261e; font: 800 .75rem Manrope, sans-serif; }
+.doctxt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.doctxt strong { color: var(--n2); font-size: .95rem; line-height: 1.3; }
+.doctxt small { color: var(--muted); font-size: .8rem; line-height: 1.4; }
+.docsize { flex: none; color: var(--muted); font-size: .78rem; }

@@ -161,6 +161,10 @@ export const SEO: Record<string, { title: string; description: string }> = {
     title: 'Preguntas frecuentes sobre el servicio de gas',
     description: 'Respuestas claras sobre facturas, pagos, categorías, trámites, olor a gas, monóxido de carbono, gasistas y atención de Transgas.',
   },
+  '/documentos': {
+    title: 'Documentos y manuales en PDF',
+    description: 'Cuadros tarifarios vigente y anteriores, reglamento del servicio, manual de emergencias e instructivos de CoopOnline y de pago, para descargar.',
+  },
   '/privacidad': {
     title: 'Política de Privacidad',
     description: 'Qué datos personales recopila Transgas, para qué los usamos y cómo ejercer tus derechos de acceso, rectificación y supresión (Ley 25.326).',
